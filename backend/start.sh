@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# Backend starter script for Happy Couple Registry
+# Gift Registry Django Backend - Start Script
 
-echo "🎁 Happy Couple Registry - Backend Setup"
+set -e
+
+echo "🎁 Gift Registry - Django Backend Startup"
 echo "========================================"
 
 # Check if Python is installed
@@ -13,31 +15,33 @@ fi
 
 echo "✅ Python 3 found: $(python3 --version)"
 
-# Create virtual environment if it doesn't exist
+# Check if virtual environment exists
 if [ ! -d "venv" ]; then
     echo "📦 Creating virtual environment..."
     python3 -m venv venv
 fi
 
 # Activate virtual environment
-echo "🔌 Activating virtual environment..."
+echo "⚙️  Activating virtual environment..."
 source venv/bin/activate
 
-# Install dependencies
+# Install/update dependencies
 echo "📥 Installing dependencies..."
 pip install -r requirements.txt
 
-# Check if database exists
-if [ ! -f "gifts_registry.db" ]; then
-    echo "🌱 Seeding database..."
-    python seed.py
-else
-    echo "✅ Database already exists"
-fi
+# Run migrations
+echo "🗄️  Running migrations..."
+python manage.py migrate
 
-# Start the Flask app
+# Start development server
 echo ""
-echo "🚀 Starting Flask server..."
-echo "Server will be available at: http://localhost:5000"
+echo "✅ Setup complete!"
 echo ""
-python app.py
+echo "🚀 Starting development server..."
+echo "📍 Server running at http://localhost:8000"
+echo "📚 Admin panel at http://localhost:8000/admin"
+echo ""
+echo "👉 First time? Create your account using the registration page"
+echo ""
+
+python manage.py runserver 0.0.0.0:8000

@@ -1,25 +1,1183 @@
-nohup: ignoring input
- * Serving Flask app 'app'
- * Debug mode: on
-[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://172.31.131.25:5000
-[33mPress CTRL+C to quit[0m
- * Restarting with stat
- * Debugger is active!
- * Debugger PIN: 101-192-163
-127.0.0.1 - - [15/Jan/2026 02:37:46] "GET /api/gifts HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:37:52] "POST /api/gifts/21c7d69f-188b-413c-81f9-baff1fe76bd7/select HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:38:00] "GET /api/couple/public HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:38:01] "GET /api/couple/public HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:38:09] "GET /api/couple/public HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:38:09] "GET /api/gifts HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:38:17] "GET /api/couple/public HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:38:18] "GET /api/couple/public HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:39:59] "OPTIONS /api/auth/login HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 02:39:59] "POST /api/auth/login HTTP/1.1" 200 -
- * Detected change in '/home/builds/happy-couple-registry/backend/api/index.py', reloading
- * Restarting with stat
- * Debugger is active!
- * Debugger PIN: 101-192-163
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Internal Server Error: /api/gifts/
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2128, in get_prep_value
+    return int(value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/contrib/auth/models.py", line 549, in __int__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: Cannot cast AnonymousUser to int. Are you trying to use it in place of User?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 243, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/mixins.py", line 42, in list
+    serializer = self.get_serializer(page, many=True)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 113, in get_serializer
+    kwargs.setdefault('context', self.get_serializer_context())
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/gifts/views.py", line 194, in get_serializer_context
+    couple, created = Couple.objects.get_or_create(user=self.request.user)
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 987, in get_or_create
+    return self.get(**kwargs), False
+           ~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 625, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+                                                        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1676, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1708, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1618, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1445, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/lookups.py", line 35, in __init__
+    self.rhs = self.get_prep_lookup()
+               ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/related_lookups.py", line 113, in get_prep_lookup
+    self.rhs = target_field.get_prep_value(self.rhs)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2130, in get_prep_value
+    raise e.__class__(
+        "Field '%s' expected a number but got %r." % (self.name, value),
+    ) from e
+TypeError: Field 'id' expected a number but got <django.contrib.auth.models.AnonymousUser object at 0x7e0ff8235e80>.
+Internal Server Error: /api/gifts/
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2128, in get_prep_value
+    return int(value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/contrib/auth/models.py", line 549, in __int__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: Cannot cast AnonymousUser to int. Are you trying to use it in place of User?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 243, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/mixins.py", line 42, in list
+    serializer = self.get_serializer(page, many=True)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 113, in get_serializer
+    kwargs.setdefault('context', self.get_serializer_context())
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/gifts/views.py", line 194, in get_serializer_context
+    couple, created = Couple.objects.get_or_create(user=self.request.user)
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 987, in get_or_create
+    return self.get(**kwargs), False
+           ~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 625, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+                                                        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1676, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1708, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1618, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1445, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/lookups.py", line 35, in __init__
+    self.rhs = self.get_prep_lookup()
+               ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/related_lookups.py", line 113, in get_prep_lookup
+    self.rhs = target_field.get_prep_value(self.rhs)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2130, in get_prep_value
+    raise e.__class__(
+        "Field '%s' expected a number but got %r." % (self.name, value),
+    ) from e
+TypeError: Field 'id' expected a number but got <django.contrib.auth.models.AnonymousUser object at 0x7e0ff8235e80>.
+[01/Apr/2026 23:58:47] "GET /api/gifts/ HTTP/1.1" 500 182565
+[01/Apr/2026 23:58:47,577] - Broken pipe from ('127.0.0.1', 36772)
+Internal Server Error: /api/gifts/
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2128, in get_prep_value
+    return int(value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/contrib/auth/models.py", line 549, in __int__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: Cannot cast AnonymousUser to int. Are you trying to use it in place of User?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 243, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/mixins.py", line 42, in list
+    serializer = self.get_serializer(page, many=True)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 113, in get_serializer
+    kwargs.setdefault('context', self.get_serializer_context())
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/gifts/views.py", line 194, in get_serializer_context
+    couple, created = Couple.objects.get_or_create(user=self.request.user)
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 987, in get_or_create
+    return self.get(**kwargs), False
+           ~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 625, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+                                                        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1676, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1708, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1618, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1445, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/lookups.py", line 35, in __init__
+    self.rhs = self.get_prep_lookup()
+               ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/related_lookups.py", line 113, in get_prep_lookup
+    self.rhs = target_field.get_prep_value(self.rhs)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2130, in get_prep_value
+    raise e.__class__(
+        "Field '%s' expected a number but got %r." % (self.name, value),
+    ) from e
+TypeError: Field 'id' expected a number but got <django.contrib.auth.models.AnonymousUser object at 0x7e0ff8263610>.
+Internal Server Error: /api/gifts/
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2128, in get_prep_value
+    return int(value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/contrib/auth/models.py", line 549, in __int__
+    raise TypeError(
+    ...<2 lines>...
+    )
+TypeError: Cannot cast AnonymousUser to int. Are you trying to use it in place of User?
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/views/generic/base.py", line 106, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 243, in get
+    return self.list(request, *args, **kwargs)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/mixins.py", line 42, in list
+    serializer = self.get_serializer(page, many=True)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/rest_framework/generics.py", line 113, in get_serializer
+    kwargs.setdefault('context', self.get_serializer_context())
+                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/gifts/views.py", line 194, in get_serializer_context
+    couple, created = Couple.objects.get_or_create(user=self.request.user)
+                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 987, in get_or_create
+    return self.get(**kwargs), False
+           ~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 625, in get
+    clone = self._chain() if self.query.combinator else self.filter(*args, **kwargs)
+                                                        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1542, in filter
+    return self._filter_or_exclude(False, args, kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1560, in _filter_or_exclude
+    clone._filter_or_exclude_inplace(negate, args, kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/query.py", line 1570, in _filter_or_exclude_inplace
+    self._query.add_q(Q(*args, **kwargs))
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1676, in add_q
+    clause, _ = self._add_q(q_object, can_reuse)
+                ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1708, in _add_q
+    child_clause, needed_inner = self.build_filter(
+                                 ~~~~~~~~~~~~~~~~~^
+        child,
+        ^^^^^^
+    ...<7 lines>...
+        update_join_types=update_join_types,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1618, in build_filter
+    condition = self.build_lookup(lookups, col, value)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/sql/query.py", line 1445, in build_lookup
+    lookup = lookup_class(lhs, rhs)
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/lookups.py", line 35, in __init__
+    self.rhs = self.get_prep_lookup()
+               ~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/related_lookups.py", line 113, in get_prep_lookup
+    self.rhs = target_field.get_prep_value(self.rhs)
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/home/tasks/projetos/cha-de-panela/backend/venv/lib/python3.13/site-packages/django/db/models/fields/__init__.py", line 2130, in get_prep_value
+    raise e.__class__(
+        "Field '%s' expected a number but got %r." % (self.name, value),
+    ) from e
+TypeError: Field 'id' expected a number but got <django.contrib.auth.models.AnonymousUser object at 0x7e0ff8263610>.
+[01/Apr/2026 23:58:51] "GET /api/gifts/ HTTP/1.1" 500 182565
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 01, 2026 - 23:58:41
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 01, 2026 - 23:59:03
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[01/Apr/2026 23:59:06] "GET /api/gifts/ HTTP/1.1" 200 52
+[01/Apr/2026 23:59:45] "OPTIONS /api/auth/register/ HTTP/1.1" 200 0
+[01/Apr/2026 23:59:45] "POST /api/auth/register/ HTTP/1.1" 201 655
+[02/Apr/2026 00:00:16] "OPTIONS /api/gifts/ HTTP/1.1" 200 0
+Bad Request: /api/gifts/
+Bad Request: /api/gifts/
+[02/Apr/2026 00:00:16] "POST /api/gifts/ HTTP/1.1" 400 40
+[02/Apr/2026 00:01:10] "GET /api/couple/public/ HTTP/1.1" 200 444
+[02/Apr/2026 00:01:10] "GET /api/gifts/ HTTP/1.1" 200 52
+[02/Apr/2026 00:02:19] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 00:02:19] "POST /api/auth/login/ HTTP/1.1" 200 679
+[02/Apr/2026 00:02:25] "GET /api/couple/public/ HTTP/1.1" 200 444
+[02/Apr/2026 00:02:25] "GET /api/gifts/ HTTP/1.1" 200 52
+Bad Request: /api/gifts/
+Bad Request: /api/gifts/
+[02/Apr/2026 00:03:33] "POST /api/gifts/ HTTP/1.1" 400 41
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 01, 2026 - 23:59:05
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:03:51
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:03:52
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:03:54
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[02/Apr/2026 00:04:01] "POST /api/gifts/ HTTP/1.1" 201 416
+[02/Apr/2026 00:04:06] "POST /api/gifts/ HTTP/1.1" 201 396
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:03:57
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:04:32
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:04:34
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:04:38
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:04:40
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[02/Apr/2026 00:04:48] "GET /api/store/Joao%20e%20maria/ HTTP/1.1" 200 1268
+[02/Apr/2026 00:05:01] "PUT /api/couple/ HTTP/1.1" 200 478
+[02/Apr/2026 00:07:20] "GET /api/store/Ramon%20e%20Iara/ HTTP/1.1" 200 1302
+Bad Request: /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/reserve/
+Bad Request: /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/reserve/
+[02/Apr/2026 00:07:24] "POST /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/reserve/ HTTP/1.1" 400 40
+[02/Apr/2026 00:07:37] "POST /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/reserve/ HTTP/1.1" 200 404
+[02/Apr/2026 00:08:51] "GET /api/store/Ramon%20e%20Iara/ HTTP/1.1" 200 8231
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+[02/Apr/2026 00:08:51] "GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+Not Found: /favicon.ico
+Not Found: /favicon.ico
+[02/Apr/2026 00:08:51] "GET /favicon.ico HTTP/1.1" 404 2353
+[02/Apr/2026 00:09:03] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 00:09:03] "POST /api/auth/login/ HTTP/1.1" 200 679
+[02/Apr/2026 00:09:29] "OPTIONS /api/gifts/ HTTP/1.1" 200 0
+[02/Apr/2026 00:09:29] "POST /api/gifts/ HTTP/1.1" 201 408
+[02/Apr/2026 00:09:35] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:09:38] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:20] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:20] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:20] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:20] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:22] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:22] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:22] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:22] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:30] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:30] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:31] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:31] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:31] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:31] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:31] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:10:31] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:11:57] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:12:10] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:12:13] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:12:19] "GET /api/couple/public/ HTTP/1.1" 200 478
+[02/Apr/2026 00:12:19] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:12:39] "GET /api/couple/public/ HTTP/1.1" 200 478
+[02/Apr/2026 00:12:39] "GET /api/gifts/ HTTP/1.1" 200 1282
+[02/Apr/2026 00:12:46] "OPTIONS /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/ HTTP/1.1" 200 0
+Unauthorized: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/
+Unauthorized: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/
+[02/Apr/2026 00:12:46] "POST /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/ HTTP/1.1" 401 68
+[02/Apr/2026 00:13:37] "GET /api/store/Iara%20%26%20Ramon/ HTTP/1.1" 200 883
+Unauthorized: /api/gifts/
+Unauthorized: /api/gifts/
+[02/Apr/2026 00:13:50] "POST /api/gifts/ HTTP/1.1" 401 27
+[02/Apr/2026 00:13:54] "POST /api/auth/register/ HTTP/1.1" 201 620
+[02/Apr/2026 00:13:58] "POST /api/gifts/ HTTP/1.1" 201 464
+[02/Apr/2026 00:14:39] "GET /api/couple/public/ HTTP/1.1" 200 419
+[02/Apr/2026 00:14:39] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:42] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:42] "GET /api/couple/public/ HTTP/1.1" 200 419
+[02/Apr/2026 00:14:43] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:43] "GET /api/couple/public/ HTTP/1.1" 200 419
+[02/Apr/2026 00:14:43] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:43] "GET /api/couple/public/ HTTP/1.1" 200 419
+[02/Apr/2026 00:14:44] "GET /api/couple/public/ HTTP/1.1" 200 419
+[02/Apr/2026 00:14:44] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:44] "GET /api/couple/public/ HTTP/1.1" 200 419
+[02/Apr/2026 00:14:44] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:44] "GET /api/couple/public/ HTTP/1.1" 200 419
+[02/Apr/2026 00:14:44] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:46] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:47] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:48] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:48] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:14:49] "GET /api/gifts/ HTTP/1.1" 200 1747
+[02/Apr/2026 00:15:25] "OPTIONS /api/gifts/ HTTP/1.1" 200 0
+[02/Apr/2026 00:15:25] "POST /api/gifts/ HTTP/1.1" 201 575
+[02/Apr/2026 00:15:29] "OPTIONS /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/ HTTP/1.1" 200 0
+Forbidden: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/
+Forbidden: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/
+[02/Apr/2026 00:15:29] "DELETE /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/ HTTP/1.1" 403 65
+[02/Apr/2026 00:16:47] "POST /api/gifts/ HTTP/1.1" 201 468
+[02/Apr/2026 00:16:56] "GET /api/store/Teste%20Imagem/ HTTP/1.1" 200 1354
+[02/Apr/2026 00:17:35] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:17:39] "OPTIONS /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/ HTTP/1.1" 200 0
+Forbidden: /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/
+Forbidden: /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/
+[02/Apr/2026 00:17:39] "DELETE /api/gifts/fb7c48ea-6204-440b-bf06-6ade4ec42771/ HTTP/1.1" 403 65
+[02/Apr/2026 00:17:43] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:17:43] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:17:50] "OPTIONS /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/ HTTP/1.1" 200 0
+Forbidden: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/
+Forbidden: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/
+[02/Apr/2026 00:17:50] "POST /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/select/ HTTP/1.1" 403 60
+[02/Apr/2026 00:17:59] "POST /api/auth/login/ HTTP/1.1" 200 679
+[02/Apr/2026 00:18:09] "OPTIONS /api/gifts/5529f573-f0aa-48c9-8cf3-fd8ed65ceb73/ HTTP/1.1" 200 0
+Forbidden: /api/gifts/5529f573-f0aa-48c9-8cf3-fd8ed65ceb73/
+Forbidden: /api/gifts/5529f573-f0aa-48c9-8cf3-fd8ed65ceb73/
+[02/Apr/2026 00:18:09] "DELETE /api/gifts/5529f573-f0aa-48c9-8cf3-fd8ed65ceb73/ HTTP/1.1" 403 65
+[02/Apr/2026 00:18:17] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:18:23] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:18:30] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:20:04] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:20:08] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:20:43] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:20:43] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:20:43] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:21:03] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:21:03] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:21:03] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:21:03] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:21:03] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:21:03] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:21:03] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:21:03] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:21:03] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:21:03] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:21:10] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:21:10] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:21:10] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:21:10] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:21:10] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:21:10] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:21:10] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:21:10] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:21:10] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:21:10] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:21:10] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:21:10] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:24:22] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:24:22] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:24:22] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:22] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:22] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:24:22] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:22] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:22] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:22] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:23] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:24:23] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:24:24] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:24:24] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:24:24] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:24] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:24:24] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:24] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:24] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:24] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:24] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:24:24] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:24:24] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:24:24] "GET /api/gifts/ HTTP/1.1" 200 3261
+[02/Apr/2026 00:24:46] "DELETE /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/ HTTP/1.1" 204 0
+Not Found: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/
+Not Found: /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/
+[02/Apr/2026 00:24:50] "DELETE /api/gifts/83debd7a-736a-4764-9cef-bdd1d4ec8599/ HTTP/1.1" 404 45
+[02/Apr/2026 00:25:12] "DELETE /api/gifts/dabc2973-f8b0-464a-854a-c6df1aa81edc/ HTTP/1.1" 204 0
+[02/Apr/2026 00:26:02] "GET /api/gifts/ HTTP/1.1" 200 2844
+[02/Apr/2026 00:26:02] "GET /api/store/Iara%20%26%20Ramon/ HTTP/1.1" 200 1459
+[02/Apr/2026 00:26:02] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1036
+[02/Apr/2026 00:27:07] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:27:07] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:27:07] "GET /api/store/Iara%20%26%20Ramon/ HTTP/1.1" 200 1459
+[02/Apr/2026 00:27:08] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:27:08] "GET /api/store/Iara%20%26%20Ramon/ HTTP/1.1" 200 1459
+[02/Apr/2026 00:27:08] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:27:19] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:27:19] "GET /api/store/Iara%20%26%20Ramon/ HTTP/1.1" 200 1459
+[02/Apr/2026 00:27:21] "GET /api/store/Iara%20%26%20Ramon/ HTTP/1.1" 200 1459
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:04:48
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:27:41
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:27:49
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[02/Apr/2026 00:27:52] "OPTIONS /api/gifts/7875020f-78f6-4ef2-b31b-d32280417019/reserve/ HTTP/1.1" 200 0
+[02/Apr/2026 00:27:52] "POST /api/gifts/7875020f-78f6-4ef2-b31b-d32280417019/reserve/ HTTP/1.1" 200 414
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/urls.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:27:51
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/views.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:28:24
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Not Found: /api/store/Iara & Ramon/
+Not Found: /api/store/Iara & Ramon/
+[02/Apr/2026 00:28:29] "GET /api/store/Iara%20%26%20Ramon/ HTTP/1.1" 404 30
+[02/Apr/2026 00:28:29] "GET /api/gifts/ HTTP/1.1" 200 2850
+[02/Apr/2026 00:28:29] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1042
+[02/Apr/2026 00:28:39] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:28:39] "GET /api/gifts/ HTTP/1.1" 200 2850
+[02/Apr/2026 00:28:39] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1042
+[02/Apr/2026 00:28:46] "POST /api/auth/login/ HTTP/1.1" 200 679
+[02/Apr/2026 00:28:55] "OPTIONS /api/gifts/7875020f-78f6-4ef2-b31b-d32280417019/ HTTP/1.1" 200 0
+[02/Apr/2026 00:28:55] "DELETE /api/gifts/7875020f-78f6-4ef2-b31b-d32280417019/ HTTP/1.1" 204 0
+[02/Apr/2026 00:29:06] "OPTIONS /api/gifts/2596cbcb-ccc3-415a-8db0-a5512df1f0f2/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:06] "DELETE /api/gifts/2596cbcb-ccc3-415a-8db0-a5512df1f0f2/ HTTP/1.1" 204 0
+[02/Apr/2026 00:29:09] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:09] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:29:22] "GET /api/store/iara-ramon/ HTTP/1.1" 200 475
+[02/Apr/2026 00:29:25] "GET /api/store/casal-teste/ HTTP/1.1" 200 894
+[02/Apr/2026 00:29:46] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:46] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:46] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:29:46] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:29:49] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:49] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:49] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:29:49] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:29:56] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:56] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:29:56] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:29:56] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:30:21] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:30:21] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:30:21] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:30:21] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:30:56] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:30:56] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:30:56] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:30:56] "GET /api/couple/ HTTP/1.1" 200 464
+[02/Apr/2026 00:31:44] "GET /api/store/iara-ramon/ HTTP/1.1" 200 475
+[02/Apr/2026 00:31:44] "GET /api/store/casal-teste/ HTTP/1.1" 200 894
+Not Found: /api/store/invalid-slug/
+Not Found: /api/store/invalid-slug/
+[02/Apr/2026 00:31:44] "GET /api/store/invalid-slug/ HTTP/1.1" 404 30
+[02/Apr/2026 00:31:48] "GET /api/store/iara-ramon/ HTTP/1.1" 200 475
+Not Found: /api/store/invalid-slug/
+Not Found: /api/store/invalid-slug/
+[02/Apr/2026 00:31:53] "GET /api/store/invalid-slug/ HTTP/1.1" 404 30
+[02/Apr/2026 00:32:28] "GET /api/gifts/ HTTP/1.1" 200 1859
+[02/Apr/2026 00:32:28] "GET /api/store/iara-ramon/ HTTP/1.1" 200 475
+[02/Apr/2026 00:32:28] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 52
+[02/Apr/2026 00:32:36] "GET /api/gifts/ HTTP/1.1" 200 1859
+[02/Apr/2026 00:32:36] "GET /api/store/iara-ramon/ HTTP/1.1" 200 475
+[02/Apr/2026 00:32:36] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 52
+[02/Apr/2026 00:35:15] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 00:35:15] "POST /api/auth/login/ HTTP/1.1" 200 679
+[02/Apr/2026 00:35:20] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:35:20] "GET /api/couple/ HTTP/1.1" 200 464
+Not Found: /api/store/Ramon e Iara/
+Not Found: /api/store/Ramon e Iara/
+[02/Apr/2026 00:36:00] "GET /api/store/Ramon%20e%20Iara/ HTTP/1.1" 404 5462
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/js/csrf.js HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+[02/Apr/2026 00:36:00] "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 304 0
+Not Found: /api/store/Ramon e Iara/
+Not Found: /api/store/Ramon e Iara/
+[02/Apr/2026 00:36:03] "GET /api/store/Ramon%20e%20Iara/ HTTP/1.1" 404 5462
+Not Found: /api/
+Not Found: /api/
+[02/Apr/2026 00:36:16] "GET /api/ HTTP/1.1" 404 5457
+[02/Apr/2026 00:36:24] "GET /api/store/iara-ramon/ HTTP/1.1" 200 475
+[02/Apr/2026 00:36:29] "GET /api/store/iara-ramon/ HTTP/1.1" 200 475
+[02/Apr/2026 00:41:34] "GET /api/store/iara-ramon/ HTTP/1.1" 200 2332
+[02/Apr/2026 00:41:44] "GET /api/store/iara-ramon/ HTTP/1.1" 200 2366
+[02/Apr/2026 00:42:59] "GET /api/store/iara-ramon/ HTTP/1.1" 200 2366
+[02/Apr/2026 00:42:59] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1909
+[02/Apr/2026 00:42:59] "GET /api/gifts/ HTTP/1.1" 200 3717
+[02/Apr/2026 00:43:36] "OPTIONS /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/reserve/ HTTP/1.1" 200 0
+[02/Apr/2026 00:43:36] "POST /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/reserve/ HTTP/1.1" 200 482
+[02/Apr/2026 00:43:51] "GET /api/couple/public/ HTTP/1.1" 200 406
+[02/Apr/2026 00:44:45] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 00:44:46] "POST /api/auth/login/ HTTP/1.1" 200 713
+[02/Apr/2026 00:44:52] "OPTIONS /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/ HTTP/1.1" 200 0
+[02/Apr/2026 00:44:52] "DELETE /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/ HTTP/1.1" 204 0
+[02/Apr/2026 00:45:02] "OPTIONS /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/ HTTP/1.1" 200 0
+Not Found: /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/
+Not Found: /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/
+[02/Apr/2026 00:45:02] "DELETE /api/gifts/416925b5-b29d-4b90-bf52-f330e2b5053d/ HTTP/1.1" 404 45
+[02/Apr/2026 00:45:18] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:45:18] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:45:33] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:45:33] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:48:15] "GET /api/gifts/ HTTP/1.1" 200 3240
+[02/Apr/2026 00:48:15] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:48:15] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1432
+[02/Apr/2026 00:48:15] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:48:27] "OPTIONS /api/gifts/ HTTP/1.1" 200 0
+[02/Apr/2026 00:48:27] "POST /api/gifts/ HTTP/1.1" 201 446
+[02/Apr/2026 00:48:33] "OPTIONS /api/gifts/e62d8a88-4101-4709-bada-abab3ac5f098/ HTTP/1.1" 200 0
+[02/Apr/2026 00:48:33] "DELETE /api/gifts/e62d8a88-4101-4709-bada-abab3ac5f098/ HTTP/1.1" 204 0
+[02/Apr/2026 00:48:34] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:48:34] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:48:40] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:48:40] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:48:50] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:48:50] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:48:56] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:48:56] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:49:55] "GET /api/gifts/ HTTP/1.1" 200 3240
+[02/Apr/2026 00:49:55] "GET /api/gifts/ HTTP/1.1" 200 3240
+[02/Apr/2026 00:49:55] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1432
+[02/Apr/2026 00:50:04] "GET /api/store/teste-imagem/ HTTP/1.1" 200 1354
+[02/Apr/2026 00:50:22] "OPTIONS /api/gifts/5529f573-f0aa-48c9-8cf3-fd8ed65ceb73/reserve/ HTTP/1.1" 200 0
+[02/Apr/2026 00:50:22] "POST /api/gifts/5529f573-f0aa-48c9-8cf3-fd8ed65ceb73/reserve/ HTTP/1.1" 200 474
+[02/Apr/2026 00:50:39] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:50:48] "GET /api/store/ramon-e-iara/ HTTP/1.1" 200 893
+[02/Apr/2026 00:50:52] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:50:54] "GET /api/store/teste-imagem/ HTTP/1.1" 200 1360
+[02/Apr/2026 00:51:02] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:51:08] "GET /api/store/casal-teste/ HTTP/1.1" 200 894
+[02/Apr/2026 00:51:11] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:51:21] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:51:48] "OPTIONS /api/auth/register/ HTTP/1.1" 200 0
+Bad Request: /api/auth/register/
+Bad Request: /api/auth/register/
+[02/Apr/2026 00:51:48] "POST /api/auth/register/ HTTP/1.1" 400 52
+[02/Apr/2026 00:51:59] "OPTIONS /api/auth/register/ HTTP/1.1" 200 0
+[02/Apr/2026 00:52:00] "POST /api/auth/register/ HTTP/1.1" 201 673
+[02/Apr/2026 00:52:00] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 52
+[02/Apr/2026 00:52:07] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:52:07] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:52:15] "GET /api/store/iara-ramon/ HTTP/1.1" 200 467
+[02/Apr/2026 00:52:15] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:52:15] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 52
+[02/Apr/2026 00:52:19] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 52
+[02/Apr/2026 00:52:19] "GET /api/store/iara-ramon/ HTTP/1.1" 200 467
+[02/Apr/2026 00:52:19] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:52:19] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 52
+[02/Apr/2026 00:52:19] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:52:19] "GET /api/store/iara-ramon/ HTTP/1.1" 200 467
+[02/Apr/2026 00:52:20] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 52
+[02/Apr/2026 00:52:20] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:52:20] "GET /api/store/iara-ramon/ HTTP/1.1" 200 467
+[02/Apr/2026 00:52:20] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 52
+[02/Apr/2026 00:52:20] "GET /api/store/iara-ramon/ HTTP/1.1" 200 467
+[02/Apr/2026 00:52:20] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:52:20] "GET /api/store/iara-ramon/ HTTP/1.1" 200 467
+[02/Apr/2026 00:52:20] "GET /api/gifts/ HTTP/1.1" 200 3246
+[02/Apr/2026 00:52:20] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 52
+[02/Apr/2026 00:52:50] "OPTIONS /api/gifts/ HTTP/1.1" 200 0
+[02/Apr/2026 00:52:50] "POST /api/gifts/ HTTP/1.1" 201 424
+[02/Apr/2026 00:52:54] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:52:54] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:52:54] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:53:00] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:53:00] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:53:00] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:53:05] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:53:05] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:53:05] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:53:08] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:54:00] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:00] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1432
+[02/Apr/2026 00:54:10] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:16] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:20] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:26] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 00:54:26] "POST /api/auth/login/ HTTP/1.1" 200 673
+[02/Apr/2026 00:54:26] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:54:30] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:54:30] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:54:34] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:34] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:34] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:54:38] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:54:40] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:46] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:49] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 00:54:49] "POST /api/auth/login/ HTTP/1.1" 200 713
+[02/Apr/2026 00:54:49] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1432
+[02/Apr/2026 00:54:59] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:59] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:54:59] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1432
+[02/Apr/2026 00:55:07] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:55:07] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 00:55:12] "GET /api/gifts/ HTTP/1.1" 200 3671
+[02/Apr/2026 00:55:12] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:55:12] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 1432
+[02/Apr/2026 00:55:25] "OPTIONS /api/gifts/828f4e7d-e261-4b98-b41d-aebeca29ff7c/ HTTP/1.1" 200 0
+[02/Apr/2026 00:55:25] "DELETE /api/gifts/828f4e7d-e261-4b98-b41d-aebeca29ff7c/ HTTP/1.1" 204 0
+[02/Apr/2026 00:55:30] "OPTIONS /api/gifts/62ce89dc-aa46-49e0-9524-46486edf7174/ HTTP/1.1" 200 0
+[02/Apr/2026 00:55:30] "DELETE /api/gifts/62ce89dc-aa46-49e0-9524-46486edf7174/ HTTP/1.1" 204 0
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:28:25
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:58:01
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:58:07
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[02/Apr/2026 00:58:44] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:44] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:44] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:44] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:44] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:44] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:44] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:44] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:58:44] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:58:44] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:58:44] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:58:44] "GET /api/gifts/ HTTP/1.1" 200 2759
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+/home/tasks/projetos/cha-de-panela/backend/gifts/serializers.py changed, reloading.
+Performing system checks...
+
+System check identified no issues (0 silenced).
+April 02, 2026 - 00:58:13
+Django version 6.0.3, using settings 'core.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[02/Apr/2026 00:58:50] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:58:50] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:50] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:58:50] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:50] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:58:50] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:50] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:58:50] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:58:50] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:58:50] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:58:50] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:58:50] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 00:59:00] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:00] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:00] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:00] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:59:00] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:59:00] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:59:04] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:04] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:04] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:04] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:59:04] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 00:59:04] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:59:34] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:34] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:59:34] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:59:37] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:37] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:59:37] "GET /api/store/iara-ramon/ HTTP/1.1" 200 891
+[02/Apr/2026 00:59:43] "GET /api/gifts/ HTTP/1.1" 200 2759
+[02/Apr/2026 00:59:43] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 476
+[02/Apr/2026 00:59:46] "OPTIONS /api/gifts/1ee9992d-7993-4b0d-ae76-dc21ab48804c/ HTTP/1.1" 200 0
+[02/Apr/2026 00:59:46] "DELETE /api/gifts/1ee9992d-7993-4b0d-ae76-dc21ab48804c/ HTTP/1.1" 204 0
+[02/Apr/2026 01:00:05] "OPTIONS /api/gifts/ HTTP/1.1" 200 0
+[02/Apr/2026 01:00:05] "POST /api/gifts/ HTTP/1.1" 201 404
+[02/Apr/2026 01:01:27] "GET /api/gifts/ HTTP/1.1" 200 2739
+[02/Apr/2026 01:01:27] "GET /api/gifts/ HTTP/1.1" 200 2739
+[02/Apr/2026 01:01:27] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 456
+[02/Apr/2026 01:01:34] "GET /api/gifts/ HTTP/1.1" 200 2739
+[02/Apr/2026 01:01:34] "GET /api/gifts/ HTTP/1.1" 200 2739
+[02/Apr/2026 01:01:34] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 456
+[02/Apr/2026 01:01:37] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 01:01:37] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 01:01:41] "GET /api/gifts/ HTTP/1.1" 200 2739
+[02/Apr/2026 01:01:41] "GET /api/store/iara-ramon/ HTTP/1.1" 200 871
+[02/Apr/2026 01:01:41] "GET /api/gifts/?couple_id=85a251f4-2c72-4d4a-82cc-a4ada013cf8f HTTP/1.1" 200 456
+[02/Apr/2026 01:02:51] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 01:02:51] "POST /api/auth/login/ HTTP/1.1" 200 713
+[02/Apr/2026 01:02:51] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 01:02:57] "GET /api/gifts/ HTTP/1.1" 200 2739
+[02/Apr/2026 01:03:08] "OPTIONS /api/auth/register/ HTTP/1.1" 200 0
+Bad Request: /api/auth/register/
+Bad Request: /api/auth/register/
+[02/Apr/2026 01:03:08] "POST /api/auth/register/ HTTP/1.1" 400 91
+[02/Apr/2026 01:03:24] "OPTIONS /api/auth/register/ HTTP/1.1" 200 0
+[02/Apr/2026 01:03:25] "POST /api/auth/register/ HTTP/1.1" 201 673
+[02/Apr/2026 01:03:25] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 52
+[02/Apr/2026 01:03:31] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 01:03:31] "GET /api/couple/ HTTP/1.1" 200 456
+[02/Apr/2026 01:04:04] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 01:04:04] "PUT /api/couple/ HTTP/1.1" 200 479
+[02/Apr/2026 01:04:19] "OPTIONS /api/gifts/ HTTP/1.1" 200 0
+[02/Apr/2026 01:04:19] "POST /api/gifts/ HTTP/1.1" 201 402
+[02/Apr/2026 01:04:53] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+Bad Request: /api/couple/
+Bad Request: /api/couple/
+[02/Apr/2026 01:04:53] "PUT /api/couple/ HTTP/1.1" 400 179
+[02/Apr/2026 01:05:16] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+Bad Request: /api/couple/
+Bad Request: /api/couple/
+[02/Apr/2026 01:05:16] "PUT /api/couple/ HTTP/1.1" 400 89
+[02/Apr/2026 01:05:28] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+Bad Request: /api/couple/
+Bad Request: /api/couple/
+[02/Apr/2026 01:05:28] "PUT /api/couple/ HTTP/1.1" 400 89
+[02/Apr/2026 01:05:44] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 01:05:44] "PUT /api/couple/ HTTP/1.1" 200 558
+[02/Apr/2026 01:05:54] "GET /api/gifts/ HTTP/1.1" 200 3142
+[02/Apr/2026 01:05:54] "GET /api/store/iara-e-ramon/ HTTP/1.1" 200 971
+[02/Apr/2026 01:05:54] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 454
+[02/Apr/2026 01:06:09] "OPTIONS /api/gifts/a3970aea-88f0-4e53-b192-9ae3b844b091/reserve/ HTTP/1.1" 200 0
+[02/Apr/2026 01:06:09] "POST /api/gifts/a3970aea-88f0-4e53-b192-9ae3b844b091/reserve/ HTTP/1.1" 200 403
+[02/Apr/2026 01:06:28] "GET /api/store/iara-e-ramon/ HTTP/1.1" 200 972
+[02/Apr/2026 01:06:28] "GET /api/gifts/ HTTP/1.1" 200 3143
+[02/Apr/2026 01:06:28] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 455
+[02/Apr/2026 01:06:34] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 01:06:35] "POST /api/auth/login/ HTTP/1.1" 200 713
+[02/Apr/2026 01:06:35] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 520
+[02/Apr/2026 01:06:51] "OPTIONS /api/gifts/bd6fab44-bc90-47e6-b7f2-41a915c34d5b/ HTTP/1.1" 200 0
+[02/Apr/2026 01:06:51] "DELETE /api/gifts/bd6fab44-bc90-47e6-b7f2-41a915c34d5b/ HTTP/1.1" 204 0
+[02/Apr/2026 01:06:55] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:06:55] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 52
+[02/Apr/2026 01:06:56] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:06:56] "GET /api/gifts/?couple_id=2f86f741-586d-42cb-814f-c80633268d96 HTTP/1.1" 200 52
+[02/Apr/2026 01:06:59] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 01:06:59] "GET /api/couple/ HTTP/1.1" 200 498
+[02/Apr/2026 01:07:20] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:07:27] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+Bad Request: /api/auth/login/
+Bad Request: /api/auth/login/
+[02/Apr/2026 01:07:27] "POST /api/auth/login/ HTTP/1.1" 400 51
+[02/Apr/2026 01:07:35] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[02/Apr/2026 01:07:35] "POST /api/auth/login/ HTTP/1.1" 200 775
+[02/Apr/2026 01:07:35] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 455
+[02/Apr/2026 01:07:40] "OPTIONS /api/couple/ HTTP/1.1" 200 0
+[02/Apr/2026 01:07:40] "GET /api/couple/ HTTP/1.1" 200 558
+[02/Apr/2026 01:07:45] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:07:45] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:07:45] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 455
+[02/Apr/2026 01:07:47] "GET /api/store/iara-e-ramon/ HTTP/1.1" 200 972
+[02/Apr/2026 01:08:02] "OPTIONS /api/gifts/a3970aea-88f0-4e53-b192-9ae3b844b091/ HTTP/1.1" 200 0
+[02/Apr/2026 01:08:02] "PUT /api/gifts/a3970aea-88f0-4e53-b192-9ae3b844b091/ HTTP/1.1" 200 403
+[02/Apr/2026 01:08:05] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 455
+[02/Apr/2026 01:08:05] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:08:05] "GET /api/store/iara-e-ramon/ HTTP/1.1" 200 972
+[02/Apr/2026 01:16:14] "GET /api/store/iara-e-ramon/ HTTP/1.1" 200 972
+[02/Apr/2026 01:16:14] "GET /api/store/iara-ramon/ HTTP/1.1" 200 871
+[02/Apr/2026 01:17:02] "GET /api/store/iara-e-ramon/ HTTP/1.1" 200 972
+[02/Apr/2026 01:17:02] "GET /api/store/iara-ramon/ HTTP/1.1" 200 871
+[02/Apr/2026 01:18:25] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:18:25] "GET /api/gifts/ HTTP/1.1" 200 2674
+[02/Apr/2026 01:18:26] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 455
+[02/Apr/2026 01:19:45] "GET /api/store/iara-ramon/ HTTP/1.1" 200 871

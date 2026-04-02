@@ -16,10 +16,12 @@ import { Gift, CreateGiftInput } from '@/types';
 import { Loader2 } from 'lucide-react';
 
 const giftSchema = z.object({
-  title: z.string().min(3, 'O título deve ter no mínimo 3 caracteres'),
+  name: z.string().min(3, 'O nome deve ter no mínimo 3 caracteres'),
+  title: z.string().optional(),
   description: z.string().min(10, 'A descrição deve ter no mínimo 10 caracteres'),
   price: z.coerce.number().min(1, 'O preço deve ser maior que zero'),
-  imageUrl: z.string().url('Insira uma URL de imagem válida'),
+  image_url: z.string().url('Insira uma URL de imagem válida').optional().or(z.literal('')),
+  imageUrl: z.string().optional(),
 });
 
 interface GiftFormProps {
@@ -33,15 +35,24 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
   const form = useForm<CreateGiftInput>({
     resolver: zodResolver(giftSchema),
     defaultValues: {
+      name: gift?.name || gift?.title || '',
       title: gift?.title || '',
       description: gift?.description || '',
-      price: gift?.price || 0,
+      price: gift?.price ? Number(gift.price) : 0,
+      image_url: gift?.image_url || gift?.imageUrl || '',
       imageUrl: gift?.imageUrl || '',
     },
   });
 
   const handleSubmit = async (data: CreateGiftInput) => {
-    await onSubmit(data);
+    // Ensure all fields are properly set for backend
+    const backendData: CreateGiftInput = {
+      name: data.name || data.title || '',
+      description: data.description,
+      price: data.price,
+      image_url: data.image_url || data.imageUrl || undefined,
+    };
+    await onSubmit(backendData);
     form.reset();
   };
 
@@ -50,10 +61,10 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-3 sm:space-y-4">
         <FormField
           control={form.control}
-          name="title"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-sm sm:text-base">Título do Presente</FormLabel>
+              <FormLabel className="text-sm sm:text-base">Nome do Presente</FormLabel>
               <FormControl>
                 <Input placeholder="Ex: Jogo de Panelas" {...field} className="text-sm" />
               </FormControl>
@@ -104,7 +115,7 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
 
         <FormField
           control={form.control}
-          name="imageUrl"
+          name="image_url"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-sm sm:text-base">URL da Imagem</FormLabel>
@@ -121,11 +132,11 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
           )}
         />
 
-        {form.watch('imageUrl') && (
+        {form.watch('image_url') && (
           <div className="rounded-lg border p-2 sm:p-3">
             <p className="mb-2 text-xs text-muted-foreground">Pré-visualização:</p>
             <img
-              src={form.watch('imageUrl')}
+              src={form.watch('image_url')}
               alt="Preview"
               className="h-24 w-24 sm:h-32 sm:w-32 rounded object-cover"
               onError={(e) => {

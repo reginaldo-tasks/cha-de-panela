@@ -1,6 +1,6 @@
-# 🎁 Flask Backend - cha de paneça
+# 🎁 Django DRF Backend - Cha de Panela
 
-Backend Flask para a aplicação de Lista de Presentes de Casamento com SQLite.
+Backend Django REST Framework para a aplicação de Lista de Presentes de Casamento.
 
 ## 📋 Requisitos
 
@@ -31,13 +31,40 @@ venv\Scripts\activate  # Windows
 pip install -r requirements.txt
 ```
 
-#### 3. Configurar variáveis de ambiente
+#### 3. Executar migrações
 ```bash
-# Copie o arquivo de exemplo (já existe .env)
-cat .env
+python manage.py migrate
 ```
 
-#### 4. Popular banco de dados com dados de teste
+#### 4. Criar superusuário (admin) - OPCIONAL
+```bash
+python manage.py createsuperuser
+```
+
+#### 5. Executar servidor
+```bash
+python manage.py runserver 0.0.0.0:8000
+```
+
+O servidor estará disponível em `http://localhost:8000`
+
+## 👤 Fluxo de Primeiro Acesso
+
+1. Inicie o backend com `./start.sh`
+2. Inicie o frontend (em outra aba)
+3. Acesse http://localhost:5173 (ou a porta do seu frontend)
+4. Clique em "Criar Conta" ou "Registrar"
+5. Preenchça:
+   - Email: seu-email@exemplo.com
+   - Senha: sua-senha-segura
+   - Nome do Casal: (opcional, pode deixar em branco)
+6. Você receberá um token JWT e será autenticado automaticamente
+7. Agora pode criar sua lista de presentes
+
+## 🌱 Seed com Dados de Teste (OPCIONAL)
+
+Se você quiser testar a aplicação com dados de exemplo:
+
 ```bash
 python seed.py
 ```
@@ -46,13 +73,7 @@ Isso criará um casal padrão com:
 - 📧 Email: `casal@email.com`
 - 🔑 Senha: `senha123`
 - 💑 Casal: Iara & Ramon
-
-#### 5. Executar servidor
-```bash
-python app.py
-```
-
-O servidor estará disponível em `http://localhost:5000`
+- 5 presentes de exemplo
 
 ## 🔌 API Endpoints
 

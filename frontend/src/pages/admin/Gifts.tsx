@@ -22,7 +22,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Pencil, Trash2, Gift as GiftIcon, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Gift as GiftIcon, Loader2, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Gifts() {
@@ -71,7 +71,7 @@ export default function Gifts() {
 
   const handleDelete = async () => {
     if (!deletingGift) return;
-    
+
     try {
       await deleteGift(deletingGift.id);
       toast({
@@ -102,7 +102,7 @@ export default function Gifts() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       <AdminSidebar />
-      
+
       <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8">
         <div className="mb-6 sm:mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
@@ -146,14 +146,14 @@ export default function Gifts() {
               <Card key={gift.id}>
                 <CardContent className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center p-3 sm:p-4">
                   <img
-                    src={gift.imageUrl}
-                    alt={gift.title}
+                    src={gift.image_url || gift.imageUrl || ''}
+                    alt={gift.name || gift.title || 'Gift'}
                     className="h-24 w-24 sm:h-20 sm:w-20 rounded-lg object-cover flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-sm sm:text-base">{gift.title}</h3>
-                      {gift.isSelected && (
+                      <h3 className="font-semibold text-sm sm:text-base">{gift.name || gift.title}</h3>
+                      {(gift.is_selected || gift.isSelected) && (
                         <Badge variant="secondary" className="text-xs sm:text-sm">Presenteado</Badge>
                       )}
                     </div>
@@ -161,18 +161,18 @@ export default function Gifts() {
                       {gift.description}
                     </p>
                     <p className="font-display text-base sm:text-lg font-bold text-primary mt-1">
-                      {formatPrice(gift.price)}
+                      {formatPrice(Number(gift.price) || 0)}
                     </p>
                   </div>
                   <div className="flex gap-2 w-full sm:w-auto">
                     <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 sm:flex-none sm:size-icon"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full sm:w-auto gap-2"
                       onClick={() => openEditForm(gift)}
+                      variant="outline"
                     >
-                      <Pencil className="h-4 w-4" />
-                      <span className="sm:hidden ml-2">Editar</span>
+                      <Heart className="h-4 w-4" />
+                      <span className="hidden sm:inline">Presentear</span>
+                      <span className="sm:hidden">Editar</span>
                     </Button>
                     <Button
                       variant="outline"

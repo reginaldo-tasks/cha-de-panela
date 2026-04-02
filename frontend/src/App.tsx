@@ -7,7 +7,10 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { GiftsProvider } from "@/contexts/GiftsContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Store from "./pages/Store";
+import StoreDetail from "./pages/StoreDetail";
+import HowItWorks from "./pages/HowItWorks";
 import Login from "./pages/admin/Login";
+import Register from "./pages/admin/Register";
 import Dashboard from "./pages/admin/Dashboard";
 import Gifts from "./pages/admin/Gifts";
 import Settings from "./pages/admin/Settings";
@@ -26,15 +29,18 @@ const App = () => (
             <Routes>
               {/* Public Routes */}
               <Route path="/" element={<Store />} />
+              <Route path="/como-funciona" element={<HowItWorks />} />
+              <Route path="/:slug" element={<StoreDetail />} />
               <Route path="/admin/login" element={<Login />} />
-              
+              <Route path="/admin/register" element={<Register />} />
+
               {/* Protected Admin Routes */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/admin" element={<Dashboard />} />
                 <Route path="/admin/gifts" element={<Gifts />} />
                 <Route path="/admin/settings" element={<Settings />} />
               </Route>
-              
+
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>

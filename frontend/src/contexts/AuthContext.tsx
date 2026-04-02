@@ -6,6 +6,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   couple: Couple | null;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, coupleName?: string) => Promise<void>;
   logout: () => void;
   updateCouple: (data: Partial<Couple>) => void;
   isLoading: boolean;
@@ -22,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check for existing session
     const token = localStorage.getItem('auth_token');
     const savedCouple = localStorage.getItem('couple_data');
-    
+
     if (token && savedCouple) {
       try {
         setCouple(JSON.parse(savedCouple));
@@ -37,11 +38,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
-    
+
     try {
       const response = await api.auth.login(email, password);
       const { token, couple: coupleData } = response;
-      
+
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('couple_data', JSON.stringify(coupleData));
+      setCouple(coupleData);
+      setIsAuthenticated(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const register = async (email: string, password: string, coupleName?: string) => {
+    setIsLoading(true);
+
+    try {
+      const response = await api.auth.register(email, password, coupleName);
+      const { token, couple: coupleData } = response;
+
       localStorage.setItem('auth_token', token);
       localStorage.setItem('couple_data', JSON.stringify(coupleData));
       setCouple(coupleData);
@@ -67,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, couple, login, logout, updateCouple, isLoading }}>
+    <AuthContext.Provider value={{ isAuthenticated, couple, login, register, logout, updateCouple, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

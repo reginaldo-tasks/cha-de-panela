@@ -1,15 +1,19 @@
-import { Heart, Share2, LogIn } from 'lucide-react';
+import { Heart, Share2, LogIn, HelpCircle } from 'lucide-react';
 import { Button } from './ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 
 interface HeaderProps {
-  title: string;
-  coupleName: string;
+  title?: string;
+  coupleName?: string;
 }
 
 export function Header({ title, coupleName }: HeaderProps) {
   const { toast } = useToast();
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  const isHowItWorks = location.pathname === '/como-funciona';
+  const isDetailPage = location.pathname !== '/' && location.pathname !== '/como-funciona' && !location.pathname.includes('/admin');
 
   const handleShare = async () => {
     const shareData = {
@@ -41,15 +45,27 @@ export function Header({ title, coupleName }: HeaderProps) {
             <Heart className="h-5 w-5 text-primary" />
           </div>
           <span className="hidden font-display text-lg font-semibold text-foreground sm:inline">
-            {coupleName}
+            {coupleName || 'Lista de Presentes'}
           </span>
         </Link>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={handleShare} className="gap-2">
-            <Share2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Compartilhar</span>
-          </Button>
+          {isDetailPage && title && coupleName && (
+            <Button variant="outline" size="sm" onClick={handleShare} className="gap-2">
+              <Share2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Compartilhar</span>
+            </Button>
+          )}
+
+          {(isHomePage || isDetailPage) && (
+            <Link to="/como-funciona">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <HelpCircle className="h-4 w-4" />
+                <span className="hidden sm:inline">Como Funciona</span>
+              </Button>
+            </Link>
+          )}
+
           <Link to="/admin/login">
             <Button variant="ghost" size="sm" className="gap-2">
               <LogIn className="h-4 w-4" />
