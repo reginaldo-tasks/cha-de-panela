@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pip install -r requirements.txt && python manage.py migrate --noinput || true",
+  "buildCommand": "pip install -r requirements.txt && python run_migrations.py",
   "devCommand": "python manage.py runserver",
   "env": {
     "PYTHONUNBUFFERED": "1"
