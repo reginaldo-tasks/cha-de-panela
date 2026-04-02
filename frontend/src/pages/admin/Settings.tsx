@@ -304,12 +304,12 @@ export default function Settings() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 bg-white p-3 rounded border border-blue-200">
                       <code className="flex-1 text-sm font-mono text-blue-900">
-                        http://localhost:8080/{generateSlug(form.watch('couple_name'))}
+                        {`${window.location.origin}/store/${generateSlug(form.watch('couple_name'))}`}
                       </code>
                       <button
                         onClick={() => {
                           navigator.clipboard.writeText(
-                            `http://localhost:8080/${generateSlug(form.watch('couple_name'))}`
+                            `${window.location.origin}/store/${generateSlug(form.watch('couple_name'))}`
                           );
                           setCopiedUrl(true);
                           setTimeout(() => setCopiedUrl(false), 2000);
