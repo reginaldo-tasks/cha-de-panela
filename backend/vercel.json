@@ -2,7 +2,8 @@
   "buildCommand": "pip install -r requirements.txt && python run_migrations.py",
   "devCommand": "python manage.py runserver",
   "env": {
-    "PYTHONUNBUFFERED": "1"
+    "PYTHONUNBUFFERED": "1",
+    "DJANGO_SETTINGS_MODULE": "core.settings"
   },
   "builds": [
     {
