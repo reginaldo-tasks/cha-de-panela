@@ -1181,3 +1181,4 @@ Bad Request: /api/auth/login/
 [02/Apr/2026 01:18:25] "GET /api/gifts/ HTTP/1.1" 200 2674
 [02/Apr/2026 01:18:26] "GET /api/gifts/?couple_id=29346e58-0e6d-421a-8f63-870e38f30310 HTTP/1.1" 200 455
 [02/Apr/2026 01:19:45] "GET /api/store/iara-ramon/ HTTP/1.1" 200 871
+[02/Apr/2026 01:23:30] "GET /api/gifts/ HTTP/1.1" 200 2674
