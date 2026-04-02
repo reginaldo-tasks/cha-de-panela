@@ -1,0 +1,25 @@
+nohup: ignoring input
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.31.131.25:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 101-192-163
+127.0.0.1 - - [15/Jan/2026 02:37:46] "GET /api/gifts HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:37:52] "POST /api/gifts/21c7d69f-188b-413c-81f9-baff1fe76bd7/select HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:38:00] "GET /api/couple/public HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:38:01] "GET /api/couple/public HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:38:09] "GET /api/couple/public HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:38:09] "GET /api/gifts HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:38:17] "GET /api/couple/public HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:38:18] "GET /api/couple/public HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:39:59] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 02:39:59] "POST /api/auth/login HTTP/1.1" 200 -
+ * Detected change in '/home/builds/happy-couple-registry/backend/api/index.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 101-192-163

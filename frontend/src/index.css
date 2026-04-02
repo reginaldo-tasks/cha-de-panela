@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design system for Wedding Gift List - Romantic Theme */
+
+@layer base {
+  :root {
+    /* Romantic rose/blush color palette */
+    --background: 20 33% 98%;
+    --foreground: 350 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 350 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 350 25% 15%;
+
+    /* Rose/pink primary */
+    --primary: 340 65% 47%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Soft blush secondary */
+    --secondary: 350 30% 95%;
+    --secondary-foreground: 350 25% 25%;
+
+    /* Muted rose */
+    --muted: 350 20% 94%;
+    --muted-foreground: 350 15% 45%;
+
+    /* Gold accent for elegance */
+    --accent: 38 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 350 20% 88%;
+    --input: 350 20% 88%;
+    --ring: 340 65% 47%;
+
+    --radius: 0.75rem;
+
+    /* Custom romantic colors */
+    --rose-light: 350 60% 96%;
+    --rose-medium: 340 50% 85%;
+    --gold: 38 70% 50%;
+    --gold-light: 38 60% 90%;
+
+    --sidebar-background: 350 30% 97%;
+    --sidebar-foreground: 350 25% 25%;
+    --sidebar-primary: 340 65% 47%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 350 30% 92%;
+    --sidebar-accent-foreground: 350 25% 25%;
+    --sidebar-border: 350 20% 88%;
+    --sidebar-ring: 340 65% 47%;
+  }
+
+  .dark {
+    --background: 350 30% 8%;
+    --foreground: 350 20% 95%;
+
+    --card: 350 25% 12%;
+    --card-foreground: 350 20% 95%;
+
+    --popover: 350 25% 12%;
+    --popover-foreground: 350 20% 95%;
+
+    --primary: 340 60% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 350 20% 18%;
+    --secondary-foreground: 350 20% 95%;
+
+    --muted: 350 20% 18%;
+    --muted-foreground: 350 15% 60%;
+
+    --accent: 38 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 40%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 350 20% 20%;
+    --input: 350 20% 20%;
+    --ring: 340 60% 55%;
+
+    --rose-light: 350 30% 15%;
+    --rose-medium: 340 30% 25%;
+    --gold: 38 60% 45%;
+    --gold-light: 38 40% 20%;
+
+    --sidebar-background: 350 25% 10%;
+    --sidebar-foreground: 350 20% 95%;
+    --sidebar-primary: 340 60% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 350 20% 15%;
+    --sidebar-accent-foreground: 350 20% 95%;
+    --sidebar-border: 350 20% 20%;
+    --sidebar-ring: 340 60% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  .romantic-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--gold) / 0.1));
+  }
+  
+  .gold-text {
+    color: hsl(var(--gold));
+  }
+  
+  .rose-bg {
+    background-color: hsl(var(--rose-light));
+  }
+}

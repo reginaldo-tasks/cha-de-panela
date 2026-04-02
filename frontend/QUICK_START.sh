@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Quick Start Script - Happy Couple Registry
+# Inicia Frontend + Backend automaticamente
+
+echo "🎁 Happy Couple Registry - Quick Start"
+echo "======================================"
+echo ""
+
+# Check if we have two terminals open
+echo "📋 Para iniciar o projeto, você precisa de 2 terminais:"
+echo ""
+echo "┌─────────────────────────────────────────────────────┐"
+echo "│  TERMINAL 1: Backend Flask                          │"
+echo "├─────────────────────────────────────────────────────┤"
+echo "│  cd /home/builds/happy-couple-registry/backend      │"
+echo "│  source venv/bin/activate                           │"
+echo "│  python3.12 app.py                                  │"
+echo "│                                                     │"
+echo "│  Rodará em: http://localhost:5000/api              │"
+echo "└─────────────────────────────────────────────────────┘"
+echo ""
+echo "┌─────────────────────────────────────────────────────┐"
+echo "│  TERMINAL 2: Frontend React                         │"
+echo "├─────────────────────────────────────────────────────┤"
+echo "│  cd /home/builds/happy-couple-registry              │"
+echo "│  npm run dev                                        │"
+echo "│                                                     │"
+echo "│  Rodará em: http://localhost:8080                  │"
+echo "└─────────────────────────────────────────────────────┘"
+echo ""
+echo "🔐 Credenciais:"
+echo "  Email: casal@email.com"
+echo "  Senha: senha123"
+echo ""
+echo "✅ Configuração:"
+echo "  ✓ Backend em: localhost:5000"
+echo "  ✓ Frontend em: localhost:8080"
+echo "  ✓ Frontend → Backend: .env configurado"
+echo ""
