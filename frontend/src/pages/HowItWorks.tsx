@@ -227,15 +227,15 @@ export default function HowItWorks() {
                                         key={item.step}
                                         onClick={() => setActiveStep(item.step)}
                                         className={`w-full text-left p-4 rounded-lg border-2 transition-all ${activeStep === item.step
-                                                ? 'border-primary bg-primary/10'
-                                                : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                                            ? 'border-primary bg-primary/10'
+                                            : 'border-border hover:border-primary/50 hover:bg-muted/50'
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
                                             <div
                                                 className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold ${activeStep === item.step
-                                                        ? 'bg-primary text-primary-foreground'
-                                                        : 'bg-muted text-muted-foreground'
+                                                    ? 'bg-primary text-primary-foreground'
+                                                    : 'bg-muted text-muted-foreground'
                                                     }`}
                                             >
                                                 {item.step}

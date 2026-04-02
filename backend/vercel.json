@@ -1,5 +1,5 @@
 {
-  "buildCommand": "python manage.py migrate",
+  "buildCommand": "python manage.py migrate || true",
   "builds": [
     {
       "src": "core/wsgi.py",
@@ -11,7 +11,8 @@
     }
   ],
   "env": {
-    "PYTHONUNBUFFERED": "1"
+    "PYTHONUNBUFFERED": "1",
+    "VERCEL": "1"
   },
   "routes": [
     {
@@ -19,4 +20,6 @@
       "dest": "core/wsgi.py"
     }
   ]
+}
+]
 }

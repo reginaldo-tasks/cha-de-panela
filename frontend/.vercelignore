@@ -1,0 +1,17 @@
+.git
+.gitignore
+.env
+.env.local
+.env.*.local
+node_modules
+npm-debug.log
+yarn-error.log
+.DS_Store
+dist
+build
+.pytest_cache
+.coverage
+*.log
+.idea
+.vscode
+.vercel
