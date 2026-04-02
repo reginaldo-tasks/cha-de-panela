@@ -45,6 +45,13 @@ export function GiftsProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     refreshGifts();
+
+    // Auto-refresh gifts every 10 seconds
+    const interval = setInterval(() => {
+      refreshGifts();
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, [couple?.id]);
 
   const saveGifts = (newGifts: Gift[]) => {
