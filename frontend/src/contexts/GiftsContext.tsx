@@ -29,14 +29,18 @@ export function GiftsProvider({ children }: { children: ReactNode }) {
       let data: Gift[];
       if (token && couple?.id) {
         // If authenticated, fetch only this couple's gifts
+        console.log(`[GiftsContext] Refreshing gifts for couple ${couple.id}...`);
         data = await api.gifts.getAll(couple.id);
+        console.log(`[GiftsContext] ✓ Fetched ${data.length} gifts`, data.map(g => ({ id: g.id, name: g.name, status: g.status, reserved_by: g.reserved_by })));
       } else {
         // If not authenticated, fetch all public gifts
+        console.log(`[GiftsContext] Refreshing all public gifts...`);
         data = await api.gifts.getAll();
+        console.log(`[GiftsContext] ✓ Fetched ${data.length} public gifts`);
       }
       setGifts(data);
     } catch (error) {
-      console.error('Erro ao carregar presentes:', error);
+      console.error('[GiftsContext] ✗ Erro ao carregar presentes:', error);
       setGifts([]);
     } finally {
       setIsLoading(false);
@@ -44,14 +48,20 @@ export function GiftsProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    console.log(`[GiftsContext] useEffect triggered with couple.id:`, couple?.id);
     refreshGifts();
 
     // Auto-refresh gifts every 10 seconds
+    console.log('[GiftsContext] Setting up auto-refresh interval (10 seconds)');
     const interval = setInterval(() => {
+      console.log('[GiftsContext] ⏱️ Auto-refresh triggered');
       refreshGifts();
     }, 10000);
 
-    return () => clearInterval(interval);
+    return () => {
+      console.log('[GiftsContext] Clearing auto-refresh interval');
+      clearInterval(interval);
+    };
   }, [couple?.id]);
 
   const saveGifts = (newGifts: Gift[]) => {

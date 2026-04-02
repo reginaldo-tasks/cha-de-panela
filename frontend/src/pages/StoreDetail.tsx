@@ -56,6 +56,7 @@ export default function StoreDetail() {
 
             try {
                 setIsLoading(true);
+                console.log(`[StoreDetail] Fetching store data for slug: ${slug}`);
                 const response = await fetch(`${API_BASE_URL}/store/${encodeURIComponent(slug)}/`);
 
                 if (!response.ok) {
@@ -63,6 +64,7 @@ export default function StoreDetail() {
                 }
 
                 const data = await response.json();
+                console.log(`[StoreDetail] ✓ Store loaded:`, { couple: data.couple_name, giftCount: data.gifts?.length || 0 });
                 setStoreData({
                     couple: {
                         id: data.id,
@@ -77,6 +79,7 @@ export default function StoreDetail() {
                     gifts: data.gifts || [],
                 });
             } catch (error) {
+                console.error('[StoreDetail] ✗ Error loading store:', error);
                 toast({
                     title: 'Erro',
                     description: error instanceof Error ? error.message : 'Não foi possível carregar a loja',
@@ -102,6 +105,7 @@ export default function StoreDetail() {
 
         setIsReserving(true);
         try {
+            console.log(`[StoreDetail] Attempting to reserve gift ${giftId} for ${reserveName}`);
             const response = await fetch(`${API_BASE_URL}/gifts/${giftId}/reserve/`, {
                 method: 'POST',
                 headers: {
@@ -111,6 +115,8 @@ export default function StoreDetail() {
             });
 
             if (response.ok) {
+                const reservedGift = await response.json();
+                console.log(`[StoreDetail] ✓ Gift reserved successfully:`, reservedGift);
                 toast({
                     title: 'Sucesso!',
                     description: 'Presente reservado com sucesso',
@@ -124,11 +130,13 @@ export default function StoreDetail() {
                         gift.id === giftId ? { ...gift, status: 'reserved', reserved_by: reserveName } : gift
                     );
                     setStoreData({ ...storeData, gifts: updatedGifts });
+                    console.log(`[StoreDetail] ✓ Updated local state, gift now shows as reserved by ${reserveName}`);
                 }
             } else {
                 throw new Error('Não foi possível reservar o presente');
             }
         } catch (error) {
+            console.error('[StoreDetail] ✗ Error reserving gift:', error);
             toast({
                 title: 'Erro',
                 description: error instanceof Error ? error.message : 'Erro ao reservar presente',

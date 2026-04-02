@@ -153,8 +153,15 @@ export default function Gifts() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="font-semibold text-sm sm:text-base">{gift.name || gift.title}</h3>
-                      {(gift.is_selected || gift.isSelected) && (
-                        <Badge variant="secondary" className="text-xs sm:text-sm">Presenteado</Badge>
+                      {gift.status === 'purchased' && (
+                        <Badge className="text-xs sm:text-sm bg-green-100 text-green-800 hover:bg-green-100">
+                          ✓ Comprado
+                        </Badge>
+                      )}
+                      {gift.status === 'reserved' && (
+                        <Badge variant="secondary" className="text-xs sm:text-sm">
+                          Reservado por {gift.reserved_by}
+                        </Badge>
                       )}
                     </div>
                     <p className="line-clamp-1 text-xs sm:text-sm text-muted-foreground">
