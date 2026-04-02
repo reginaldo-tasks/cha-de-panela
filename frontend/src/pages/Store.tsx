@@ -90,7 +90,7 @@ export default function Store() {
             {couplesLinks.map((couple) => (
               <button
                 key={couple.slug}
-                onClick={() => navigate(`/${couple.slug}`)}
+                onClick={() => navigate(`/store/${couple.slug}`)}
                 className="group relative p-6 rounded-lg border border-secondary bg-card hover:bg-secondary/50 hover:border-primary/50 transition-all duration-300 text-left"
               >
                 <div className="flex items-start justify-between mb-3">
