@@ -8,13 +8,20 @@ export default function Dashboard() {
   const { gifts } = useGifts();
   const { couple } = useAuth();
 
+  // Helper to convert price to number
+  const toNumber = (price: number | string | null | undefined): number => {
+    if (price === null || price === undefined) return 0;
+    if (typeof price === 'string') return parseFloat(price) || 0;
+    return price || 0;
+  };
+
   const totalGifts = gifts.length;
-  const selectedGifts = gifts.filter((g) => g.isSelected).length;
+  const selectedGifts = gifts.filter((g) => g.status === 'purchased' || g.is_selected || g.isSelected).length;
   const availableGifts = totalGifts - selectedGifts;
-  const totalValue = gifts.reduce((sum, g) => sum + g.price, 0);
+  const totalValue = gifts.reduce((sum, g) => sum + toNumber(g.price), 0);
   const receivedValue = gifts
-    .filter((g) => g.isSelected)
-    .reduce((sum, g) => sum + g.price, 0);
+    .filter((g) => g.status === 'purchased' || g.is_selected || g.isSelected)
+    .reduce((sum, g) => sum + toNumber(g.price), 0);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -61,7 +68,7 @@ export default function Dashboard() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       <AdminSidebar />
-      
+
       <main className="flex-1 overflow-auto">
         <div className="p-4 sm:p-6 md:p-8">
           <div className="mb-6 sm:mb-8">
@@ -112,7 +119,7 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-3 sm:gap-4 rounded-lg border p-3 sm:p-4">
                   <div className="flex h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <span className="text-sm sm:text-lg">2</span>
@@ -124,7 +131,7 @@ export default function Dashboard() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-3 sm:gap-4 rounded-lg border p-3 sm:p-4">
                   <div className="flex h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
                     <span className="text-sm sm:text-lg">3</span>
