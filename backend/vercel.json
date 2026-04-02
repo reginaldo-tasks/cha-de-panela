@@ -11,8 +11,7 @@
     }
   ],
   "env": {
-    "PYTHONUNBUFFERED": "1",
-    "VERCEL": "1"
+    "PYTHONUNBUFFERED": "1"
   },
   "routes": [
     {
@@ -21,5 +20,4 @@
     }
   ]
 }
-]
 }

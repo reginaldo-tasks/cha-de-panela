@@ -71,18 +71,23 @@ WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
 
 # Database
-# On Vercel (serverless), use /tmp which is writable; locally use BASE_DIR
-if os.getenv('VERCEL') == '1':
-    DB_PATH = '/tmp/db.sqlite3'
-else:
-    DB_PATH = BASE_DIR / 'db.sqlite3'
-
+# PostgreSQL connection with environment variables
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_PATH,
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME', 'chapanela'),
+        'USER': os.getenv('DB_USER', 'chapanela_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', 'dpg-d770ol9aae7s73dilprg-a.oregon-postgres.render.com'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'CONN_MAX_AGE': 600,
     }
 }
+
+# Alternative: Use DATABASE_URL if provided (for Render internal connections)
+if os.getenv('DATABASE_URL'):
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600)
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
