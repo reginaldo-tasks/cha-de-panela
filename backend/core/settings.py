@@ -21,6 +21,10 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# Support for Vercel's X-Forwarded-Host header - needed for preview deployments
+if not DEBUG:
+    ALLOWED_HOSTS += ['.vercel.app']
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -130,6 +134,17 @@ CORS_ALLOWED_ORIGINS = os.getenv(
 ).split(',')
 
 CORS_ALLOW_CREDENTIALS = True
+
+# CSRF Trusted Origins (for cross-origin requests)
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:5173,http://localhost:3000,http://localhost:8080'
+).split(',')
+
+# Security Settings (for production on Vercel)
+SECURE_SSL_REDIRECT = os.getenv('SECURE_SSL_REDIRECT', 'False') == 'True'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False') == 'True'
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False') == 'True'
 
 # Logging
 LOGGING = {
