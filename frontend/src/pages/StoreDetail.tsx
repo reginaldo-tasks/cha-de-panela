@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { Loader2, Heart, MapPin, MessageCircle, Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
 interface Couple {
     id: string;
     couple_name: string;
@@ -54,7 +56,7 @@ export default function StoreDetail() {
 
             try {
                 setIsLoading(true);
-                const response = await fetch(`http://localhost:8000/api/store/${encodeURIComponent(slug)}/`);
+                const response = await fetch(`${API_BASE_URL}/store/${encodeURIComponent(slug)}/`);
 
                 if (!response.ok) {
                     throw new Error('Casal não encontrado');
@@ -100,7 +102,7 @@ export default function StoreDetail() {
 
         setIsReserving(true);
         try {
-            const response = await fetch(`http://localhost:8000/api/gifts/${giftId}/reserve/`, {
+            const response = await fetch(`${API_BASE_URL}/gifts/${giftId}/reserve/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

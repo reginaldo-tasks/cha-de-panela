@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 import { generateSlug } from '@/lib/utils';
 import { AdminSidebar } from '@/components/AdminSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -56,7 +58,7 @@ export default function Settings() {
   useEffect(() => {
     const fetchCouple = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/couple/', {
+        const response = await fetch(`${API_BASE_URL}/couple/`, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
           },
@@ -94,7 +96,7 @@ export default function Settings() {
   const onSubmit = async (data: SettingsForm) => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/api/couple/', {
+      const response = await fetch(`${API_BASE_URL}/couple/`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,

@@ -4,6 +4,8 @@ import { Heart, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Header } from '@/components/Header';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+
 export default function Store() {
   const navigate = useNavigate();
   const [couplesLinks, setCouplesLinks] = useState<Array<{ name: string; slug: string }>>([]);
@@ -12,7 +14,7 @@ export default function Store() {
     // Load a few couple examples from API
     const loadCouples = async () => {
       try {
-        const response = await fetch('http://localhost:8000/api/gifts/');
+        const response = await fetch(`${API_BASE_URL}/gifts/`);
         const data = await response.json();
 
         // Extract unique couples from gifts
