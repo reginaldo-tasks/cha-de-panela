@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { GiftCard } from '@/components/GiftCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Loader2, Heart, MapPin, MessageCircle, Copy, Check } from 'lucide-react';
+import { Loader2, Heart, MapPin, MessageCircle, Copy, Check, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { api } from '@/services/api';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -24,15 +25,25 @@ interface Couple {
 interface Gift {
     id: string;
     name: string;
-    description: string | null;
-    image_url: string | null;
-    category: string | null;
-    price: number | string;
-    priority: number;
-    status: 'available' | 'reserved' | 'purchased';
-    reserved_by: string | null;
-    url: string | null;
-    is_selected: boolean;
+    description?: string | null;
+    image_url?: string | null;
+    category?: string | null;
+    price?: number | string;
+    priority?: number;
+    status?: 'available' | 'reserved' | 'purchased';
+    reserved_by?: string | null;
+    url?: string | null;
+    is_selected?: boolean;
+    donations?: Array<{
+        id: string;
+        gift: string;
+        donor_name: string;
+        amount: string | number;
+        created_at?: string;
+    }>;
+    total_donated?: number;
+    remaining_amount?: number;
+    donation_percentage?: number;
 }
 
 interface StoreData {
@@ -42,12 +53,15 @@ interface StoreData {
 
 export default function StoreDetail() {
     const { slug } = useParams<{ slug: string }>();
+    const location = useLocation();
     const { toast } = useToast();
+    const isAdmin = location.pathname.includes('/admin');
     const [storeData, setStoreData] = useState<StoreData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
-    const [reserveName, setReserveName] = useState('');
-    const [isReserving, setIsReserving] = useState(false);
+    const [donorName, setDonorName] = useState('');
+    const [donationAmount, setDonationAmount] = useState('');
+    const [isDonating, setIsDonating] = useState(false);
     const [copiedPix, setCopiedPix] = useState(false);
 
     useEffect(() => {
@@ -93,8 +107,8 @@ export default function StoreDetail() {
         fetchStore();
     }, [slug, toast]);
 
-    const handleReserveGift = async (giftId: string) => {
-        if (!reserveName.trim()) {
+    const handleDonateGift = async (giftId: string) => {
+        if (!donorName.trim()) {
             toast({
                 title: 'Erro',
                 description: 'Por favor, digite seu nome',
@@ -103,47 +117,46 @@ export default function StoreDetail() {
             return;
         }
 
-        setIsReserving(true);
-        try {
-            console.log(`[StoreDetail] Attempting to reserve gift ${giftId} for ${reserveName}`);
-            const response = await fetch(`${API_BASE_URL}/gifts/${giftId}/reserve/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: reserveName }),
-            });
-
-            if (response.ok) {
-                const reservedGift = await response.json();
-                console.log(`[StoreDetail] ✓ Gift reserved successfully:`, reservedGift);
-                toast({
-                    title: 'Sucesso!',
-                    description: 'Presente reservado com sucesso',
-                });
-                setReserveName('');
-                setSelectedGift(null);
-
-                // Refresh store data
-                if (storeData) {
-                    const updatedGifts = storeData.gifts.map((gift) =>
-                        gift.id === giftId ? { ...gift, status: 'reserved', reserved_by: reserveName } : gift
-                    );
-                    setStoreData({ ...storeData, gifts: updatedGifts });
-                    console.log(`[StoreDetail] ✓ Updated local state, gift now shows as reserved by ${reserveName}`);
-                }
-            } else {
-                throw new Error('Não foi possível reservar o presente');
-            }
-        } catch (error) {
-            console.error('[StoreDetail] ✗ Error reserving gift:', error);
+        if (!donationAmount || parseFloat(donationAmount) <= 0) {
             toast({
                 title: 'Erro',
-                description: error instanceof Error ? error.message : 'Erro ao reservar presente',
+                description: 'Por favor, insira um valor válido',
+                variant: 'destructive',
+            });
+            return;
+        }
+
+        setIsDonating(true);
+        try {
+            console.log(`[StoreDetail] Attempting to donate R$ ${donationAmount} to gift ${giftId} by ${donorName}`);
+            const updatedGift = await api.gifts.donate(giftId, donorName, parseFloat(donationAmount));
+
+            console.log(`[StoreDetail] ✓ Donation successful:`, updatedGift);
+            toast({
+                title: 'Sucesso!',
+                description: 'Doação registrada com sucesso!',
+            });
+            setDonorName('');
+            setDonationAmount('');
+            setSelectedGift(null);
+
+            // Refresh store data
+            if (storeData) {
+                const updatedGifts: Gift[] = storeData.gifts.map((gift) =>
+                    gift.id === giftId ? updatedGift : gift
+                );
+                setStoreData({ ...storeData, gifts: updatedGifts });
+                console.log(`[StoreDetail] ✓ Updated local state with donation data`);
+            }
+        } catch (error) {
+            console.error('[StoreDetail] ✗ Error donating:', error);
+            toast({
+                title: 'Erro',
+                description: error instanceof Error ? error.message : 'Erro ao processar doação',
                 variant: 'destructive',
             });
         } finally {
-            setIsReserving(false);
+            setIsDonating(false);
         }
     };
 
@@ -264,14 +277,14 @@ export default function StoreDetail() {
                 )}
             </div>
 
-            {/* Presentear Modal - Improved Payment Flow */}
+            {/* Donation Modal */}
             {selectedGift && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
                     <Card className="w-full max-w-md">
                         <CardHeader className="space-y-2">
                             <CardTitle className="text-xl">Presentear {selectedGift.name}</CardTitle>
                             <p className="text-sm text-muted-foreground">
-                                Complete os dados para confirmar seu presente
+                                Complete os dados para contribuir com este presente
                             </p>
                         </CardHeader>
                         <CardContent className="space-y-5">
@@ -281,56 +294,133 @@ export default function StoreDetail() {
                                 <p className="font-semibold text-foreground">{selectedGift.name}</p>
                                 {selectedGift.price && (
                                     <p className="text-sm text-primary mt-1">
-                                        R$ {parseFloat(selectedGift.price as string).toFixed(2).replace('.', ',')}
+                                        Valor: R$ {parseFloat(selectedGift.price as string).toFixed(2).replace('.', ',')}
                                     </p>
                                 )}
                             </div>
 
-                            {/* Donor Name Input */}
-                            <div>
-                                <label className="text-sm font-medium">Seu Nome *</label>
-                                <Input
-                                    type="text"
-                                    placeholder="Digite seu nome"
-                                    value={reserveName}
-                                    onChange={(e) => setReserveName(e.target.value)}
-                                    className="mt-2"
-                                    onKeyPress={(e) => e.key === 'Enter' && handleReserveGift(selectedGift.id)}
-                                />
-                            </div>
-
-                            {/* PIX Key Display */}
-                            {storeData?.couple.pix_key && (
-                                <div className="space-y-2 p-4 border-2 border-primary/20 rounded-lg bg-primary/5">
-                                    <p className="text-sm font-semibold text-foreground">Chave PIX do Casal</p>
-                                    <div className="flex items-center gap-2 bg-white p-3 rounded border border-primary/30">
-                                        <code className="flex-1 text-sm font-mono text-primary break-all overflow-hidden">
-                                            {storeData.couple.pix_key}
-                                        </code>
-                                        <button
-                                            onClick={() => {
-                                                navigator.clipboard.writeText(storeData.couple.pix_key || '');
-                                                setCopiedPix(true);
-                                                setTimeout(() => setCopiedPix(false), 2000);
-                                                toast({
-                                                    title: 'Copiado!',
-                                                    description: 'Chave PIX copiada para área de transferência',
-                                                });
-                                            }}
-                                            className="p-2 hover:bg-gray-100 rounded transition flex-shrink-0"
-                                            title="Copiar chave PIX"
-                                        >
-                                            {copiedPix ? (
-                                                <Check className="h-5 w-5 text-green-600" />
-                                            ) : (
-                                                <Copy className="h-5 w-5 text-primary" />
-                                            )}
-                                        </button>
+                            {/* Donation Progress */}
+                            {selectedGift.donation_percentage !== undefined && (
+                                <div className="space-y-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                    <div className="flex items-center justify-between">
+                                        <p className="text-sm font-medium text-foreground">Progresso da Doação</p>
+                                        <span className="text-sm font-semibold text-blue-600">
+                                            {Math.round(selectedGift.donation_percentage)}%
+                                        </span>
                                     </div>
-                                    <p className="text-xs text-muted-foreground">
-                                        Copie a chave PIX e realize a transferência no seu banco
+                                    <div className="w-full bg-blue-200 rounded-full h-2">
+                                        <div
+                                            className="bg-blue-600 h-2 rounded-full transition-all"
+                                            style={{ width: `${Math.min(selectedGift.donation_percentage, 100)}%` }}
+                                        />
+                                    </div>
+                                    {selectedGift.remaining_amount !== undefined && selectedGift.remaining_amount > 0 && (
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            R$ {selectedGift.remaining_amount.toFixed(2).replace('.', ',')} ainda faltam
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Present Complete Alert */}
+                            {selectedGift.donation_percentage !== undefined && selectedGift.donation_percentage >= 100 && (
+                                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <p className="text-sm font-semibold text-green-700">✓ Presente Completo!</p>
+                                    <p className="text-xs text-green-600 mt-1">
+                                        Este presente já recebeu todas as doações necessárias. Obrigado pelos doadores!
                                     </p>
                                 </div>
+                            )}
+
+                            {/* Donors List - Only show in admin */}
+                            {isAdmin && selectedGift.donations && selectedGift.donations.length > 0 && (
+                                <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                                    <p className="text-sm font-semibold text-foreground mb-2">Quem já doou:</p>
+                                    <div className="space-y-2">
+                                        {selectedGift.donations.map((donation) => (
+                                            <div
+                                                key={donation.id}
+                                                className="flex items-center justify-between p-2 bg-white rounded border border-purple-100"
+                                            >
+                                                <span className="text-sm font-medium text-foreground">
+                                                    {donation.donor_name}
+                                                </span>
+                                                <span className="text-sm font-semibold text-purple-600">
+                                                    R$ {parseFloat(donation.amount as string).toFixed(2).replace('.', ',')}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Donor Name Input */}
+                            {!(selectedGift.donation_percentage !== undefined && selectedGift.donation_percentage >= 100) && (
+                                <>
+                                    <div>
+                                        <label className="text-sm font-medium">Seu Nome *</label>
+                                        <Input
+                                            type="text"
+                                            placeholder="Digite seu nome"
+                                            value={donorName}
+                                            onChange={(e) => setDonorName(e.target.value)}
+                                            className="mt-2"
+                                            onKeyPress={(e) => e.key === 'Enter' && donationAmount && handleDonateGift(selectedGift.id)}
+                                        />
+                                    </div>
+
+                                    {/* Donation Amount Input */}
+                                    <div>
+                                        <label className="text-sm font-medium">Valor da Doação (R$) *</label>
+                                        <Input
+                                            type="number"
+                                            placeholder="0,00"
+                                            min="0.01"
+                                            step="0.01"
+                                            value={donationAmount}
+                                            onChange={(e) => setDonationAmount(e.target.value)}
+                                            className="mt-2"
+                                            onKeyPress={(e) => e.key === 'Enter' && donorName && handleDonateGift(selectedGift.id)}
+                                        />
+                                    </div>
+
+                                    {/* PIX Key Display */}
+                                    {storeData?.couple.pix_key && (
+                                        <div className="space-y-2 p-4 border-2 border-primary/20 rounded-lg bg-primary/5">
+                                            <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+                                                <TrendingUp className="h-4 w-4" />
+                                                Chave PIX do Casal
+                                            </p>
+                                            <div className="flex items-center gap-2 bg-white p-3 rounded border border-primary/30">
+                                                <code className="flex-1 text-sm font-mono text-primary break-all overflow-hidden">
+                                                    {storeData.couple.pix_key}
+                                                </code>
+                                                <button
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(storeData.couple.pix_key || '');
+                                                        setCopiedPix(true);
+                                                        setTimeout(() => setCopiedPix(false), 2000);
+                                                        toast({
+                                                            title: 'Copiado!',
+                                                            description: 'Chave PIX copiada para área de transferência',
+                                                        });
+                                                    }}
+                                                    className="p-2 hover:bg-gray-100 rounded transition flex-shrink-0"
+                                                    title="Copiar chave PIX"
+                                                >
+                                                    {copiedPix ? (
+                                                        <Check className="h-5 w-5 text-green-600" />
+                                                    ) : (
+                                                        <Copy className="h-5 w-5 text-primary" />
+                                                    )}
+                                                </button>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground">
+                                                Copie a chave PIX e realize a transferência no seu banco
+                                            </p>
+                                        </div>
+                                    )}
+                                </>
                             )}
 
                             {/* Action Buttons */}
@@ -340,26 +430,41 @@ export default function StoreDetail() {
                                     className="flex-1"
                                     onClick={() => {
                                         setSelectedGift(null);
-                                        setReserveName('');
+                                        setDonorName('');
+                                        setDonationAmount('');
                                         setCopiedPix(false);
                                     }}
-                                    disabled={isReserving}
                                 >
-                                    Cancelar
+                                    Fechar
                                 </Button>
-                                <Button
-                                    className="flex-1"
-                                    onClick={() => handleReserveGift(selectedGift.id)}
-                                    disabled={isReserving || !reserveName.trim()}
-                                >
-                                    {isReserving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                    Confirmar Presenteação
-                                </Button>
+                                {selectedGift.donation_percentage !== undefined && selectedGift.donation_percentage >= 100 ? (
+                                    <Button
+                                        className="flex-1"
+                                        disabled
+                                    >
+                                        Presente Completo
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        className="flex-1"
+                                        onClick={() => handleDonateGift(selectedGift.id)}
+                                        disabled={isDonating || !donorName.trim() || !donationAmount || parseFloat(donationAmount) <= 0}
+                                    >
+                                        {isDonating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Confirmar Doação
+                                    </Button>
+                                )}
                             </div>
 
-                            <p className="text-xs text-muted-foreground text-center pt-2">
-                                Ao confirmar, seu nome aparecerá como quem presenteou este item
-                            </p>
+                            {selectedGift.donation_percentage !== undefined && selectedGift.donation_percentage >= 100 ? (
+                                <p className="text-xs text-muted-foreground text-center pt-2">
+                                    Obrigado pelo apoio! Este presente já foi totalmente presenteado.
+                                </p>
+                            ) : (
+                                <p className="text-xs text-muted-foreground text-center pt-2">
+                                    Ao confirmar, seu nome aparecerá como quem contribuiu para este presente
+                                </p>
+                            )}
                         </CardContent>
                     </Card>
                 </div>

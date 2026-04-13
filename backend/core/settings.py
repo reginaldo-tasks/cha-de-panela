@@ -71,6 +71,14 @@ WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
 
 # Database
+# Banco padrão local (desenvolvimento/testes)
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 # PostgreSQL connection with environment variables
 DATABASES = {
     'default': {

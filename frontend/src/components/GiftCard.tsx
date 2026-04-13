@@ -3,6 +3,7 @@ import { Card, CardContent, CardFooter } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Gift as GiftIcon, Check, Heart } from 'lucide-react';
+import { useState } from 'react';
 
 interface GiftCardProps {
   gift: Gift;
@@ -12,6 +13,8 @@ interface GiftCardProps {
 }
 
 export function GiftCard({ gift, onSelect, onReserve, isPublic = false }: GiftCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   const formatPrice = (price: number | string) => {
     const numPrice = typeof price === 'string' ? parseFloat(price) : price;
     return new Intl.NumberFormat('pt-BR', {
@@ -45,11 +48,12 @@ export function GiftCard({ gift, onSelect, onReserve, isPublic = false }: GiftCa
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 animate-fade-in">
       <div className="relative aspect-square overflow-hidden bg-muted">
-        {gift.image_url || gift.imageUrl ? (
+        {gift.image_url && !imageError ? (
           <img
-            src={gift.image_url || gift.imageUrl}
+            src={gift.image_url}
             alt={gift.name || gift.title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="flex items-center justify-center h-full w-full bg-muted">
@@ -75,6 +79,30 @@ export function GiftCard({ gift, onSelect, onReserve, isPublic = false }: GiftCa
             {formatPrice(gift.price)}
           </p>
         )}
+
+        {/* Donation Progress Bar */}
+        {gift.donation_percentage !== undefined && gift.donation_percentage > 0 && (
+          <div className="mt-4 space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground">Doações</p>
+              <span className="text-xs font-semibold text-primary">
+                {Math.round(gift.donation_percentage)}%
+              </span>
+            </div>
+            <div className="w-full bg-secondary rounded-full h-2">
+              <div
+                className="bg-primary h-2 rounded-full transition-all"
+                style={{ width: `${Math.min(gift.donation_percentage, 100)}%` }}
+              />
+            </div>
+            {gift.remaining_amount !== undefined && gift.remaining_amount > 0 && (
+              <p className="text-xs text-muted-foreground">
+                R$ {gift.remaining_amount.toFixed(2).replace('.', ',')} faltam
+              </p>
+            )}
+          </div>
+        )}
+
         {gift.reserved_by && isPublic && (
           <p className="mt-2 text-xs text-muted-foreground">
             Reservado por: <span className="font-semibold">{gift.reserved_by}</span>
@@ -86,14 +114,19 @@ export function GiftCard({ gift, onSelect, onReserve, isPublic = false }: GiftCa
         {isPublic ? (
           <Button
             onClick={() => onReserve?.(gift)}
-            disabled={gift.status !== 'available'}
+            disabled={gift.status !== 'available' || (gift.donation_percentage !== undefined && gift.donation_percentage >= 100)}
             className="w-full gap-2"
-            variant={gift.status !== 'available' ? 'secondary' : 'default'}
+            variant={gift.status !== 'available' || (gift.donation_percentage !== undefined && gift.donation_percentage >= 100) ? 'secondary' : 'default'}
           >
             {gift.status === 'purchased' ? (
               <>
                 <Check className="h-4 w-4" />
                 Presenteado
+              </>
+            ) : gift.donation_percentage !== undefined && gift.donation_percentage >= 100 ? (
+              <>
+                <Check className="h-4 w-4" />
+                Presente Completo
               </>
             ) : gift.status === 'reserved' ? (
               <>

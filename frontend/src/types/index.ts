@@ -32,8 +32,20 @@ export interface Gift {
   url?: string | null;
   is_selected?: boolean;
   isSelected?: boolean;
+  donations?: Donation[];
+  total_donated?: number;
+  remaining_amount?: number;
+  donation_percentage?: number;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface Donation {
+  id: string;
+  gift: string;
+  donor_name: string;
+  amount: string | number;
+  created_at?: string;
 }
 
 export interface LoginCredentials {
@@ -51,14 +63,14 @@ export interface CreateGiftInput {
   title?: string;
   description?: string;
   price?: number | string;
-  image_url?: string;
-  imageUrl?: string;
+  image_file?: File;  // File object instead of URL
   category?: string;
 }
 
 export interface UpdateGiftInput extends Partial<CreateGiftInput> {
   is_selected?: boolean;
   isSelected?: boolean;
+  image_file?: File;
 }
 
 export interface UpdateCoupleInput {

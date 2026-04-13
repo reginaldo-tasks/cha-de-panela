@@ -8,6 +8,8 @@ export default function Dashboard() {
   const { gifts } = useGifts();
   const { couple } = useAuth();
 
+  console.log('[Dashboard] Rendering with couple:', couple?.couple_name, 'gifts:', gifts.length);
+
   // Helper to convert price to number
   const toNumber = (price: number | string | null | undefined): number => {
     if (price === null || price === undefined) return 0;
@@ -73,7 +75,7 @@ export default function Dashboard() {
         <div className="p-4 sm:p-6 md:p-8">
           <div className="mb-6 sm:mb-8">
             <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
-              Olá, {couple?.coupleName || 'Casal'}! 💕
+              Olá, {couple?.couple_name || 'Casal'}! 💕
             </h1>
             <p className="text-sm sm:text-base text-muted-foreground">
               Aqui está um resumo da sua lista de presentes

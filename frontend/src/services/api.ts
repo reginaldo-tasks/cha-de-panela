@@ -9,7 +9,7 @@ const getAuthToken = (): string | null => {
   return localStorage.getItem('auth_token');
 };
 
-// Generic fetch wrapper with auth
+// Generic fetch wrapper with auth (for JSON)
 async function fetchWithAuth<T>(
   endpoint: string,
   options: RequestInit = {}
@@ -18,6 +18,39 @@ async function fetchWithAuth<T>(
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
+    ...options.headers,
+  };
+
+  if (token) {
+    (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: 'Erro na requisição' }));
+    throw new Error(error.message || 'Erro na requisição');
+  }
+
+  // Handle 204 No Content responses (typically DELETE)
+  if (response.status === 204) {
+    return undefined as unknown as T;
+  }
+
+  return response.json();
+}
+
+// Generic fetch wrapper with auth (for FormData - multipart)
+async function fetchWithAuthFormData<T>(
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const token = getAuthToken();
+
+  const headers: HeadersInit = {
     ...options.headers,
   };
 
@@ -95,17 +128,53 @@ export const api = {
     getById: (id: string) =>
       fetch(`${API_BASE_URL}/gifts/${id}/`).then(r => r.json()) as Promise<import('../types').Gift>,
 
-    create: (data: import('../types').CreateGiftInput) =>
-      fetchWithAuth<import('../types').Gift>('/gifts/', {
+    create: async (data: import('../types').CreateGiftInput) => {
+      // If image_file is present, use FormData for multipart upload
+      if (data.image_file) {
+        const formData = new FormData();
+        formData.append('name', data.name || '');
+        formData.append('description', data.description || '');
+        formData.append('price', String(data.price || 0));
+        if (data.category) {
+          formData.append('category', data.category);
+        }
+        formData.append('image_file', data.image_file);
+
+        return fetchWithAuthFormData<import('../types').Gift>('/gifts/', {
+          method: 'POST',
+          body: formData,
+        });
+      }
+
+      // Otherwise use standard JSON
+      return fetchWithAuth<import('../types').Gift>('/gifts/', {
         method: 'POST',
         body: JSON.stringify(data),
-      }),
+      });
+    },
 
-    update: (id: string, data: import('../types').UpdateGiftInput) =>
-      fetchWithAuth<import('../types').Gift>(`/gifts/${id}/`, {
+    update: async (id: string, data: import('../types').UpdateGiftInput) => {
+      // If image_file is present, use FormData for multipart upload
+      if (data.image_file) {
+        const formData = new FormData();
+        if (data.name) formData.append('name', data.name);
+        if (data.description) formData.append('description', data.description);
+        if (data.price !== undefined) formData.append('price', String(data.price));
+        if (data.category) formData.append('category', data.category);
+        formData.append('image_file', data.image_file);
+
+        return fetchWithAuthFormData<import('../types').Gift>(`/gifts/${id}/`, {
+          method: 'PUT',
+          body: formData,
+        });
+      }
+
+      // Otherwise use standard JSON
+      return fetchWithAuth<import('../types').Gift>(`/gifts/${id}/`, {
         method: 'PUT',
         body: JSON.stringify(data),
-      }),
+      });
+    },
 
     delete: (id: string) =>
       fetchWithAuth<void>(`/gifts/${id}/`, {
@@ -123,6 +192,13 @@ export const api = {
       fetchWithAuth<import('../types').Gift>(`/gifts/${id}/select/`, {
         method: 'POST',
       }),
+
+    donate: (id: string, donorName: string, amount: number) =>
+      fetch(`${API_BASE_URL}/gifts/${id}/donate/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ donor_name: donorName, amount }),
+      }).then(r => r.json()) as Promise<import('../types').Gift>,
   },
 
   // Upload endpoint (for images)

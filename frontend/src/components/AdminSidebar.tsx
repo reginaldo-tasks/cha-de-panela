@@ -2,11 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useState } from 'react';
-import { 
-  Heart, 
-  Gift, 
-  Settings, 
-  LogOut, 
+import {
+  Heart,
+  Gift,
+  Settings,
+  LogOut,
   LayoutDashboard,
   ExternalLink,
   Menu,
@@ -24,6 +24,8 @@ export function AdminSidebar() {
   const location = useLocation();
   const { logout, couple } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+
+  console.log('[AdminSidebar] Rendering with couple:', couple?.couple_name, 'pathname:', location.pathname);
 
   return (
     <>
@@ -89,7 +91,7 @@ export function AdminSidebar() {
               </Link>
             );
           })}
-          
+
           <Link to="/" target="_blank" onClick={() => setIsOpen(false)}>
             <Button variant="ghost" className="w-full justify-start gap-3 text-muted-foreground">
               <ExternalLink className="h-4 w-4" />

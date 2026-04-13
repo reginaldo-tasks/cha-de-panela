@@ -5,6 +5,8 @@ import { Loader2 } from 'lucide-react';
 export function ProtectedRoute() {
   const { isAuthenticated, isLoading } = useAuth();
 
+  console.log('[ProtectedRoute] isAuthenticated:', isAuthenticated, 'isLoading:', isLoading);
+
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -14,8 +16,10 @@ export function ProtectedRoute() {
   }
 
   if (!isAuthenticated) {
+    console.log('[ProtectedRoute] Not authenticated, redirecting to login');
     return <Navigate to="/admin/login" replace />;
   }
 
+  console.log('[ProtectedRoute] Authenticated, rendering outlet');
   return <Outlet />;
 }
