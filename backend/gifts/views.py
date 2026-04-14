@@ -386,32 +386,17 @@ class GiftImageView(views.APIView):
     """
     Serve gift image as binary data.
 
-    GET: Get image for a gift
+    GET: Get image for a gift (deprecated - no longer available)
     """
 
     permission_classes = [AllowAny]
 
     def get(self, request, id):
         """Get and serve gift image"""
-        try:
-            gift = Gift.objects.get(id=id)
-        except Gift.DoesNotExist:
-            return Response(
-                {"detail": "Gift not found."}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        if not gift.image_data:
-            return Response(
-                {"detail": "Gift has no image."}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Serve image with appropriate content type
-        response = HttpResponse(
-            gift.image_data, content_type=gift.image_mimetype or "image/jpeg"
+        return Response(
+            {"detail": "Gift images are no longer available."},
+            status=status.HTTP_410_GONE,
         )
-        response["Content-Length"] = len(gift.image_data)
-        response["Cache-Control"] = "public, max-age=86400"  # Cache for 24 hours
-        return response
 
 
 # ========== Store/Couple Public Detail ==========

@@ -89,10 +89,6 @@ class GiftSerializer(serializers.ModelSerializer):
     title = serializers.CharField(
         required=False, allow_blank=True, write_only=True
     )  # Accept 'title' as alias for 'name'
-    image_file = serializers.FileField(
-        write_only=True, required=False
-    )  # For file upload
-    image_url = serializers.SerializerMethodField(read_only=True)  # URL to endpoint
 
     class Meta:
         model = Gift
@@ -103,8 +99,6 @@ class GiftSerializer(serializers.ModelSerializer):
             "name",
             "title",
             "description",
-            "image_file",
-            "image_url",
             "category",
             "price",
             "priority",
@@ -123,7 +117,6 @@ class GiftSerializer(serializers.ModelSerializer):
             "id",
             "couple",
             "couple_name",
-            "image_url",
             "donations",
             "total_donated",
             "remaining_amount",
@@ -135,17 +128,6 @@ class GiftSerializer(serializers.ModelSerializer):
     def get_is_selected(self, obj):
         """Return whether gift is selected (purchased)"""
         return obj.status == "purchased"
-
-    def get_image_url(self, obj):
-        """Return URL to image endpoint if image exists"""
-        if obj.image_data:
-            request = self.context.get("request")
-            if request:
-                # Build absolute URI including scheme and host
-                image_path = f"/api/gifts/{obj.id}/image/"
-                return request.build_absolute_uri(image_path)
-            return f"/api/gifts/{obj.id}/image/"
-        return None
 
     def get_total_donated(self, obj):
         """Get total amount donated for this gift"""
@@ -197,41 +179,18 @@ class GiftSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create gift with couple from context"""
-        image_file = validated_data.pop("image_file", None)
         validated_data["couple"] = self.context["couple"]
         gift = Gift.objects.create(**validated_data)
-
-        if image_file:
-            self._process_and_save_image(gift, image_file)
-
         return gift
 
     def update(self, instance, validated_data):
-        """Handle image file upload on update"""
-        image_file = validated_data.pop("image_file", None)
-
+        """Update gift fields"""
         # Update other fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        if image_file:
-            self._process_and_save_image(instance, image_file)
-
         instance.save()
         return instance
-
-    def _process_and_save_image(self, gift, image_file):
-        """Process and save image file to gift"""
-        from gifts.image_processor import process_image
-
-        try:
-            image_bytes, mimetype = process_image(image_file)
-            gift.image_data = image_bytes
-            gift.image_mimetype = mimetype
-            gift.save()
-        except Exception as e:
-            # Rollback if image processing fails
-            raise serializers.ValidationError(f"Erro ao processar imagem: {str(e)}")
 
     def validate_price(self, value):
         """Validate price is positive if provided"""
