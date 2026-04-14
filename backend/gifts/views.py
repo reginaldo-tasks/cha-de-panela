@@ -464,6 +464,80 @@ class StoreDetailView(generics.RetrieveAPIView):
         return Response(couple_data, status=status.HTTP_200_OK)
 
 
+# ========== Image Upload Views ==========
+
+
+class GiftImageUploadView(views.APIView):
+    """
+    Upload image for a gift.
+
+    POST: Upload an image to MinIO and associate with gift
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        """Upload image for a gift"""
+        try:
+            gift = Gift.objects.get(id=id)
+        except Gift.DoesNotExist:
+            return Response(
+                {"detail": "Gift not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Check if user owns the gift
+        if gift.couple.user != request.user:
+            return Response(
+                {"detail": "You can only upload images to your own gifts."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        # Get image from request
+        image_file = request.FILES.get("image")
+        if not image_file:
+            return Response(
+                {"detail": "No image file provided."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            from gifts.minio_service import get_minio_service
+
+            minio_service = get_minio_service()
+            if not minio_service:
+                return Response(
+                    {
+                        "detail": "Image upload service is not configured.",
+                        "error": "MINIO_NOT_CONFIGURED",
+                    },
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                )
+
+            # Upload image to MinIO
+            image_url = minio_service.upload_image(image_file, gift_id=gift.id)
+
+            # Update gift with image URL
+            gift.image_url = image_url
+            gift.save()
+
+            return Response(
+                {
+                    "image_url": image_url,
+                    "message": "Image uploaded successfully",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            return Response(
+                {
+                    "detail": f"Error uploading image: {str(e)}",
+                    "error": "UPLOAD_FAILED",
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
 # ========== Health Check ==========
 
 
