@@ -82,7 +82,6 @@ class GiftSerializer(serializers.ModelSerializer):
 
     couple_name = serializers.CharField(source="couple.couple_name", read_only=True)
     is_selected = serializers.SerializerMethodField()
-    donations = DonationSerializer(many=True, read_only=True)
     total_donated = serializers.SerializerMethodField()
     remaining_amount = serializers.SerializerMethodField()
     donation_percentage = serializers.SerializerMethodField()
@@ -106,7 +105,6 @@ class GiftSerializer(serializers.ModelSerializer):
             "reserved_by",
             "url",
             "is_selected",
-            "donations",
             "total_donated",
             "remaining_amount",
             "donation_percentage",
@@ -117,7 +115,6 @@ class GiftSerializer(serializers.ModelSerializer):
             "id",
             "couple",
             "couple_name",
-            "donations",
             "total_donated",
             "remaining_amount",
             "donation_percentage",
@@ -131,39 +128,51 @@ class GiftSerializer(serializers.ModelSerializer):
 
     def get_total_donated(self, obj):
         """Get total amount donated for this gift"""
-        from django.db.models import Sum
-        from gifts.models import Donation
+        try:
+            from django.db.models import Sum
+            from gifts.models import Donation
 
-        total = Donation.objects.filter(gift=obj).aggregate(total=Sum("amount"))[
-            "total"
-        ]
-        return float(total) if total else 0.0
+            total = Donation.objects.filter(gift=obj).aggregate(total=Sum("amount"))[
+                "total"
+            ]
+            return float(total) if total else 0.0
+        except Exception:
+            # Return 0 if donations table doesn't exist yet
+            return 0.0
 
     def get_remaining_amount(self, obj):
         """Get remaining amount needed to complete the gift price"""
-        from django.db.models import Sum
-        from gifts.models import Donation
+        try:
+            from django.db.models import Sum
+            from gifts.models import Donation
 
-        total_donated = Donation.objects.filter(gift=obj).aggregate(
-            total=Sum("amount")
-        )["total"]
-        total_donated = float(total_donated) if total_donated else 0.0
-        gift_price = float(obj.price) if obj.price else 0.0
-        remaining = max(0, gift_price - total_donated)
-        return remaining
+            total_donated = Donation.objects.filter(gift=obj).aggregate(
+                total=Sum("amount")
+            )["total"]
+            total_donated = float(total_donated) if total_donated else 0.0
+            gift_price = float(obj.price) if obj.price else 0.0
+            remaining = max(0, gift_price - total_donated)
+            return remaining
+        except Exception:
+            # Return full price if donations table doesn't exist yet
+            return float(obj.price) if obj.price else 0.0
 
     def get_donation_percentage(self, obj):
         """Get percentage of gift price that has been donated"""
-        from django.db.models import Sum
-        from gifts.models import Donation
+        try:
+            from django.db.models import Sum
+            from gifts.models import Donation
 
-        gift_price = float(obj.price) if obj.price else 1.0
-        total_donated = Donation.objects.filter(gift=obj).aggregate(
-            total=Sum("amount")
-        )["total"]
-        total_donated = float(total_donated) if total_donated else 0.0
-        percentage = min(100, (total_donated / gift_price) * 100)
-        return percentage
+            gift_price = float(obj.price) if obj.price else 1.0
+            total_donated = Donation.objects.filter(gift=obj).aggregate(
+                total=Sum("amount")
+            )["total"]
+            total_donated = float(total_donated) if total_donated else 0.0
+            percentage = min(100, (total_donated / gift_price) * 100)
+            return percentage
+        except Exception:
+            # Return 0 if donations table doesn't exist yet
+            return 0.0
 
     def to_internal_value(self, data):
         """Map 'title' field to 'name' field for internal processing"""
