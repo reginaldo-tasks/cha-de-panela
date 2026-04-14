@@ -59,6 +59,20 @@ def check_database_connection():
         return False
 
 
+def try_create_donations_table():
+    """Try to create donations table manually if it doesn't exist."""
+    print("\n" + "=" * 60)
+    print("ATTEMPTING TO CREATE DONATIONS TABLE (FALLBACK)")
+    print("=" * 60)
+    try:
+        call_command("create_donations_table", verbosity=2)
+        return True
+    except Exception as e:
+        print(f"⚠ Could not create donations table manually: {type(e).__name__}")
+        print("   This is OK - fallback handlers will manage missing table.")
+        return False
+
+
 def run_migrations():
     """Run Django migrations with comprehensive error handling."""
     print("\n" + "=" * 60)
@@ -77,11 +91,15 @@ def run_migrations():
         # Check if this is a table-exists error (acceptable during builds)
         if "already exists" in error_msg or "relation" in error_msg.lower():
             print("\n✓ This appears to be a table existence issue - app will continue.")
+            print("   Attempt to create table manually...")
+            try_create_donations_table()
             print("   Migrations may run again on next deployment.")
             return True
 
         # For other errors, still continue but warn
         print("\n⚠ Continuing anyway - app has fallbacks for missing tables.")
+        print("   Attempting to create donations table manually...")
+        try_create_donations_table()
         import traceback
 
         traceback.print_exc()

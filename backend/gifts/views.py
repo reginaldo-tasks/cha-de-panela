@@ -368,12 +368,26 @@ class DonateGiftView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Create donation
-        from gifts.models import Donation
+        # Create donation (with fallback if table doesn't exist)
+        try:
+            from gifts.models import Donation
 
-        donation = Donation.objects.create(
-            gift=gift, donor_name=str(donor_name).strip(), amount=amount
-        )
+            donation = Donation.objects.create(
+                gift=gift, donor_name=str(donor_name).strip(), amount=amount
+            )
+        except Exception as e:
+            error_msg = str(e)
+            # If donations table doesn't exist, return friendly error
+            if "donations" in error_msg.lower() or "relation" in error_msg.lower():
+                return Response(
+                    {
+                        "detail": "Doações não estão disponíveis no momento. Por favor, tente novamente em alguns minutos.",
+                        "error": "DONATIONS_TABLE_NOT_READY",
+                    },
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                )
+            # For other errors, re-raise
+            raise
 
         # Return updated gift with donation info
         return Response(
