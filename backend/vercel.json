@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pip install -r requirements.txt && python run_migrations.py",
+  "buildCommand": "pip install -r requirements.txt && python run_migrations.py && python force_create_donations_table.py",
   "devCommand": "python manage.py runserver",
   "env": {
     "PYTHONUNBUFFERED": "1",
