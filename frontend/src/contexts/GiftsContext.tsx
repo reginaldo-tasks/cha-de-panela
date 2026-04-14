@@ -18,10 +18,13 @@ const GiftsContext = createContext<GiftsContextType | undefined>(undefined);
 export function GiftsProvider({ children }: { children: ReactNode }) {
   const [gifts, setGifts] = useState<Gift[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { couple } = useAuth();
 
-  const refreshGifts = async () => {
-    setIsLoading(true);
+  const refreshGifts = async (showLoader: boolean = false) => {
+    if (showLoader) {
+      setIsLoading(true);
+    }
     try {
       // Get token to determine if user is authenticated
       const token = localStorage.getItem('auth_token');
@@ -43,19 +46,23 @@ export function GiftsProvider({ children }: { children: ReactNode }) {
       console.error('[GiftsContext] ✗ Erro ao carregar presentes:', error);
       setGifts([]);
     } finally {
-      setIsLoading(false);
+      if (showLoader) {
+        setIsLoading(false);
+      }
+      setIsInitialLoad(false);
     }
   };
 
   useEffect(() => {
     console.log(`[GiftsContext] useEffect triggered with couple.id:`, couple?.id);
-    refreshGifts();
+    // Initial load: show loader
+    refreshGifts(true);
 
-    // Auto-refresh gifts every 10 seconds
+    // Auto-refresh gifts every 10 seconds (without showing loader)
     console.log('[GiftsContext] Setting up auto-refresh interval (10 seconds)');
     const interval = setInterval(() => {
       console.log('[GiftsContext] ⏱️ Auto-refresh triggered');
-      refreshGifts();
+      refreshGifts(false);
     }, 10000);
 
     return () => {
