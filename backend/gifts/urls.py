@@ -20,6 +20,7 @@ from gifts.views import (
     health_check,
 )
 from gifts.admin_minio import setup_minio, create_minio_user
+from gifts.minio_fix import fix_minio
 
 app_name = "gifts"
 
@@ -29,6 +30,7 @@ urlpatterns = [
     # Admin setup
     path("admin/setup-minio/", setup_minio, name="admin-setup-minio"),
     path("admin/create-minio-user/", create_minio_user, name="admin-create-minio-user"),
+    path("admin/fix-minio/", fix_minio, name="admin-fix-minio"),
     # Authentication
     path("auth/login/", LoginView.as_view(), name="login"),
     path("auth/register/", RegisterView.as_view(), name="register"),
