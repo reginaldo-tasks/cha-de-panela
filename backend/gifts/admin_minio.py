@@ -327,3 +327,44 @@ def setup_and_test_minio():
     }
 
     return get_status_response(200, "MinIO setup complete!", setup_log)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def create_minio_user(request):
+    """
+    Create a dedicated 'gifts-app' user in MinIO with appropriate permissions.
+
+    POST: Create new user and return credentials
+
+    Query param: token=YOUR_ADMIN_TOKEN
+    """
+    # Security check
+    token = request.query_params.get("token", "")
+    if token != ADMIN_TOKEN:
+        return get_status_response(
+            403, "Invalid or missing admin token", {"hint": "Use ?token=YOUR_TOKEN"}
+        )
+
+    from gifts.minio_user_setup import create_app_user
+
+    username, password, message = create_app_user()
+
+    if username:
+        return get_status_response(
+            200,
+            "MinIO user created successfully!",
+            {
+                "username": username,
+                "password": password,
+                "message": message,
+                "next_steps": [
+                    f"Set MINIO_ROOT_USER={username} in Vercel env",
+                    f"Set MINIO_ROOT_PASSWORD={password} in Vercel env",
+                    "Redeploy the backend",
+                    "Upload test should work now",
+                ],
+            },
+        )
+    else:
+        return get_status_response(500, "Failed to create user", {"error": message})
