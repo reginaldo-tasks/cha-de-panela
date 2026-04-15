@@ -15,19 +15,41 @@ class MinIOService:
     """Service for uploading images to MinIO."""
 
     def __init__(self):
+        import sys
+
         self.endpoint_url = os.getenv(
             "MINIO_ENDPOINT", "https://minio-latest-2yx5.onrender.com"
         )
-        self.access_key = os.getenv("MINIO_ROOT_USER")
-        self.secret_key = os.getenv("MINIO_ROOT_PASSWORD")
+        self.access_key = os.getenv("MINIO_ROOT_USER", "").strip()
+        self.secret_key = os.getenv("MINIO_ROOT_PASSWORD", "").strip()
         self.bucket_name = "gifts"
         self.public_url_prefix = f"{self.endpoint_url}/{self.bucket_name}"
 
-        if not self.access_key or not self.secret_key:
-            import sys
+        # Debug logging
+        access_key_masked = (
+            f"{self.access_key[:3]}...{self.access_key[-3:]}"
+            if len(self.access_key) > 6
+            else "***"
+        )
+        secret_key_masked = (
+            f"{self.secret_key[:3]}...{self.secret_key[-3:]}"
+            if len(self.secret_key) > 6
+            else "***"
+        )
 
+        print(f"[MinIO] Endpoint: {self.endpoint_url}", file=sys.stderr)
+        print(
+            f"[MinIO] Access Key configured: {bool(self.access_key)} ({access_key_masked})",
+            file=sys.stderr,
+        )
+        print(
+            f"[MinIO] Secret Key configured: {bool(self.secret_key)} (length: {len(self.secret_key)})",
+            file=sys.stderr,
+        )
+
+        if not self.access_key or not self.secret_key:
             print(
-                f"WARNING: MINIO credentials not configured. Access key present: {bool(self.access_key)}, Secret key present: {bool(self.secret_key)}",
+                f"ERROR: MINIO credentials not configured!",
                 file=sys.stderr,
             )
             raise ValueError("MINIO credentials not configured")
@@ -181,20 +203,30 @@ class MinIOService:
             error_msg = e.response.get("Error", {}).get("Message", str(e))
             import sys
 
-            print(f"ClientError ({error_code}): {error_msg}", file=sys.stderr)
+            print(f"[MinIO] ClientError ({error_code}): {error_msg}", file=sys.stderr)
             if error_code == "403":
-                raise Exception(
-                    f"Access denied uploading to MinIO. Check credentials and bucket write permissions. Error: {error_msg}"
+                diagnose_msg = (
+                    f"Access denied uploading to MinIO.\n"
+                    f"  Endpoint: {self.endpoint_url}\n"
+                    f"  Bucket: {self.bucket_name}\n"
+                    f"  User: {self.access_key}\n"
+                    f"  Possible causes:\n"
+                    f"    - Credentials are incorrect\n"
+                    f"    - User lacks s3:PutObject permission\n"
+                    f"    - Bucket has restrictive policies\n"
+                    f"  Error: {error_msg}"
                 )
+                print(f"[MinIO] DIAGNOSIS: {diagnose_msg}", file=sys.stderr)
+                raise Exception(diagnose_msg)
             else:
                 raise Exception(f"MinIO error: {error_msg}")
         except Exception as e:
             import sys
 
-            print(f"Error uploading image to MinIO: {e}", file=sys.stderr)
+            print(f"[MinIO] Error uploading image: {e}", file=sys.stderr)
             import traceback
 
-            traceback.print_exc()
+            traceback.print_exc(file=sys.stderr)
             raise
 
     def delete_image(self, file_key):
