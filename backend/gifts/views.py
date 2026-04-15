@@ -2,11 +2,13 @@
 Views for Gift Registry API using DRF Generic Views.
 """
 
+import os
 from rest_framework import generics, status, views, serializers
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.http import FileResponse, HttpResponse
 from io import BytesIO
 from gifts.models import Couple, Gift, Donation
@@ -529,12 +531,27 @@ class GiftImageUploadView(views.APIView):
 
         except Exception as e:
             import traceback
+            import sys
 
-            traceback.print_exc()  # Log full traceback for debugging
+            error_details = {
+                "error_type": type(e).__name__,
+                "error_message": str(e),
+                "endpoint": os.getenv(
+                    "MINIO_ENDPOINT", "https://minio-latest-2yx5.onrender.com"
+                ),
+                "bucket": "gifts",
+            }
+
+            # Log to stderr for Vercel logs
+            print(f"Image upload error: {error_details}", file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+
+            # Return user-friendly error
             return Response(
                 {
                     "detail": f"Error uploading image: {str(e)}",
                     "error": "UPLOAD_FAILED",
+                    "debug": error_details if settings.DEBUG else None,
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

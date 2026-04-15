@@ -24,6 +24,12 @@ class MinIOService:
         self.public_url_prefix = f"{self.endpoint_url}/{self.bucket_name}"
 
         if not self.access_key or not self.secret_key:
+            import sys
+
+            print(
+                f"WARNING: MINIO credentials not configured. Access key present: {bool(self.access_key)}, Secret key present: {bool(self.secret_key)}",
+                file=sys.stderr,
+            )
             raise ValueError("MINIO credentials not configured")
 
         # Create boto3 S3 client with SSL verification disabled for self-signed certs
@@ -33,19 +39,28 @@ class MinIOService:
         config = Config(
             signature_version="s3v4",
             retries={"max_attempts": 3, "mode": "standard"},
-            connect_timeout=5,
+            connect_timeout=10,
             read_timeout=60,
         )
 
-        self.client = boto3.client(
-            "s3",
-            endpoint_url=self.endpoint_url,
-            aws_access_key_id=self.access_key,
-            aws_secret_access_key=self.secret_key,
-            region_name="us-east-1",
-            verify=False,  # Disable SSL verification for self-signed certs on Render
-            config=config,
-        )
+        try:
+            self.client = boto3.client(
+                "s3",
+                endpoint_url=self.endpoint_url,
+                aws_access_key_id=self.access_key,
+                aws_secret_access_key=self.secret_key,
+                region_name="us-east-1",
+                verify=False,  # Disable SSL verification for self-signed certs on Render
+                config=config,
+            )
+            print(
+                f"MinIO client created successfully for endpoint: {self.endpoint_url}"
+            )
+        except Exception as e:
+            import sys
+
+            print(f"ERROR: Failed to create MinIO client: {e}", file=sys.stderr)
+            raise
 
         # Ensure bucket exists
         self._ensure_bucket_exists()
@@ -53,12 +68,37 @@ class MinIOService:
     def _ensure_bucket_exists(self):
         """Create bucket if it doesn't exist."""
         try:
-            self.client.head_bucket(Bucket=self.bucket_name)
-        except ClientError:
-            # Bucket doesn't exist, create it
-            self.client.create_bucket(Bucket=self.bucket_name)
-            # Make bucket public
-            self._make_bucket_public()
+            response = self.client.head_bucket(Bucket=self.bucket_name)
+            print(f"Bucket '{self.bucket_name}' exists")
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "")
+            if error_code == "404":
+                print(f"Bucket '{self.bucket_name}' does not exist, creating...")
+                try:
+                    self.client.create_bucket(Bucket=self.bucket_name)
+                    print(f"Bucket '{self.bucket_name}' created successfully")
+                    # Make bucket public
+                    self._make_bucket_public()
+                except ClientError as create_error:
+                    import sys
+
+                    print(
+                        f"ERROR: Could not create bucket: {create_error}",
+                        file=sys.stderr,
+                    )
+                    # Don't raise - let it fail later when actually trying to upload
+            elif error_code == "403":
+                import sys
+
+                print(
+                    f"ERROR: Access denied to bucket '{self.bucket_name}'. Check credentials and bucket permissions.",
+                    file=sys.stderr,
+                )
+                # Don't raise - let it fail later with specific upload error
+            else:
+                import sys
+
+                print(f"ERROR: Could not check bucket: {e}", file=sys.stderr)
 
     def _make_bucket_public(self):
         """Make bucket public for read access."""
@@ -121,6 +161,9 @@ class MinIOService:
             file_key = f"images/{gift_prefix}{uuid.uuid4()}{file_ext}"
 
             # Upload to MinIO
+            print(
+                f"Uploading image to {self.endpoint_url}/{self.bucket_name}/{file_key} (size: {len(img_bytes.getvalue())} bytes)"
+            )
             self.client.put_object(
                 Bucket=self.bucket_name,
                 Key=file_key,
@@ -130,10 +173,28 @@ class MinIOService:
             )
 
             public_url = f"{self.public_url_prefix}/{file_key}"
+            print(f"Image uploaded successfully: {public_url}")
             return public_url
 
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "")
+            error_msg = e.response.get("Error", {}).get("Message", str(e))
+            import sys
+
+            print(f"ClientError ({error_code}): {error_msg}", file=sys.stderr)
+            if error_code == "403":
+                raise Exception(
+                    f"Access denied uploading to MinIO. Check credentials and bucket write permissions. Error: {error_msg}"
+                )
+            else:
+                raise Exception(f"MinIO error: {error_msg}")
         except Exception as e:
-            print(f"Error uploading image to MinIO: {e}")
+            import sys
+
+            print(f"Error uploading image to MinIO: {e}", file=sys.stderr)
+            import traceback
+
+            traceback.print_exc()
             raise
 
     def delete_image(self, file_key):
