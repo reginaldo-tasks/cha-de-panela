@@ -19,12 +19,15 @@ from gifts.views import (
     SelectGiftView,
     health_check,
 )
+from gifts.admin_minio import setup_minio
 
 app_name = "gifts"
 
 urlpatterns = [
     # Health check
     path("health/", health_check, name="health-check"),
+    # Admin setup
+    path("admin/setup-minio/", setup_minio, name="admin-setup-minio"),
     # Authentication
     path("auth/login/", LoginView.as_view(), name="login"),
     path("auth/register/", RegisterView.as_view(), name="register"),
