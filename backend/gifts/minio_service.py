@@ -1,6 +1,6 @@
 """
-MinIO S3 service for image uploads.
-Uses MinIO Python SDK for better compatibility.
+S3 storage service for image uploads using Supabase.
+Uses boto3 for S3-compatible storage.
 """
 
 import os
@@ -8,21 +8,25 @@ import uuid
 import sys
 from io import BytesIO
 from PIL import Image
-from minio import Minio
-from minio.error import S3Error
+import boto3
+from botocore.client import Config
+from botocore.exceptions import ClientError
 
 
 class MinIOService:
-    """Service for uploading images to MinIO using MinIO SDK."""
+    """Service for uploading images to Supabase S3 storage."""
 
     def __init__(self):
+        # Supabase S3 configuration
         self.endpoint_url = os.getenv(
-            "MINIO_ENDPOINT", "https://minio-latest-2yx5.onrender.com"
+            "SUPABASE_S3_ENDPOINT",
+            "https://semrcxlyfncmanrklvon.storage.supabase.co/storage/v1/s3",
         )
-        self.access_key = os.getenv("MINIO_ROOT_USER", "").strip()
-        self.secret_key = os.getenv("MINIO_ROOT_PASSWORD", "").strip()
+        self.access_key = os.getenv("SUPABASE_ACCESS_KEY", "").strip()
+        self.secret_key = os.getenv("SUPABASE_SECRET_KEY", "").strip()
+        self.region = os.getenv("SUPABASE_REGION", "us-east-2")
         self.bucket_name = "gifts"
-        self.public_url_prefix = f"{self.endpoint_url}/{self.bucket_name}"
+        self.public_url_prefix = f"https://semrcxlyfncmanrklvon.storage.supabase.co/storage/v1/object/public/{self.bucket_name}"
 
         # Debug logging
         access_key_masked = (
@@ -30,94 +34,65 @@ class MinIOService:
             if len(self.access_key) > 6
             else "***"
         )
-        secret_key_masked = (
-            f"{self.secret_key[:3]}...{self.secret_key[-3:]}"
-            if len(self.secret_key) > 6
-            else "***"
-        )
 
-        print(f"[MinIO] Endpoint: {self.endpoint_url}", file=sys.stderr)
+        print(f"[S3] Endpoint: {self.endpoint_url}", file=sys.stderr)
+        print(f"[S3] Region: {self.region}", file=sys.stderr)
         print(
-            f"[MinIO] Access Key configured: {bool(self.access_key)} ({access_key_masked})",
+            f"[S3] Access Key configured: {bool(self.access_key)} ({access_key_masked})",
             file=sys.stderr,
         )
         print(
-            f"[MinIO] Secret Key configured: {bool(self.secret_key)} (length: {len(self.secret_key)})",
+            f"[S3] Secret Key configured: {bool(self.secret_key)} (length: {len(self.secret_key)})",
             file=sys.stderr,
         )
 
         if not self.access_key or not self.secret_key:
-            print(f"ERROR: MINIO credentials not configured!", file=sys.stderr)
-            raise ValueError("MINIO credentials not configured")
+            print(f"ERROR: Supabase S3 credentials not configured!", file=sys.stderr)
+            raise ValueError("Supabase S3 credentials not configured")
 
-        # Create MinIO client
-        # MinIO SDK handles SSL verification and permissions better than boto3
-        endpoint_clean = self.endpoint_url.replace("https://", "").replace(
-            "http://", ""
+        # Create boto3 S3 client for Supabase
+        config = Config(
+            signature_version="s3v4",
+            retries={"max_attempts": 3, "mode": "standard"},
+            connect_timeout=10,
+            read_timeout=60,
         )
-        use_ssl = "https://" in self.endpoint_url
 
         try:
-            self.client = Minio(
-                endpoint_clean,
-                access_key=self.access_key,
-                secret_key=self.secret_key,
-                secure=use_ssl,
-                region="us-east-1",
+            self.client = boto3.client(
+                "s3",
+                endpoint_url=self.endpoint_url,
+                aws_access_key_id=self.access_key,
+                aws_secret_access_key=self.secret_key,
+                region_name=self.region,
+                config=config,
             )
-            print(
-                f"[MinIO] MinIO SDK client created for: {endpoint_clean}",
-                file=sys.stderr,
-            )
+            print(f"[S3] S3 client created for: {self.endpoint_url}", file=sys.stderr)
         except Exception as e:
-            print(f"[MinIO] Error creating client: {str(e)}", file=sys.stderr)
+            print(f"[S3] Error creating client: {str(e)}", file=sys.stderr)
             raise
 
         # Ensure bucket exists
         self._ensure_bucket_exists()
 
     def _ensure_bucket_exists(self):
-        """Create bucket if it doesn't exist."""
+        """Check if bucket exists."""
         try:
-            exists = self.client.bucket_exists(self.bucket_name)
-            if exists:
-                print(f"[MinIO] Bucket '{self.bucket_name}' exists", file=sys.stderr)
+            self.client.head_bucket(Bucket=self.bucket_name)
+            print(f"[S3] Bucket '{self.bucket_name}' exists", file=sys.stderr)
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "")
+            if error_code == "404":
+                print(
+                    f"[S3] Warning: Bucket '{self.bucket_name}' not found",
+                    file=sys.stderr,
+                )
             else:
-                print(f"[MinIO] Creating bucket '{self.bucket_name}'", file=sys.stderr)
-                self.client.make_bucket(self.bucket_name)
-                print(f"[MinIO] Bucket created successfully", file=sys.stderr)
-                self._make_bucket_public()
-        except Exception as e:
-            print(f"[MinIO] Bucket check error: {str(e)}", file=sys.stderr)
-            # Don't raise - let it fail later with specific error
-
-    def _make_bucket_public(self):
-        """Set bucket policy for public read access."""
-        import json
-
-        policy = {
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Effect": "Allow",
-                    "Principal": "*",
-                    "Action": ["s3:GetObject"],
-                    "Resource": f"arn:aws:s3:::{self.bucket_name}/*",
-                }
-            ],
-        }
-        try:
-            self.client.set_bucket_policy(self.bucket_name, json.dumps(policy))
-            print(f"[MinIO] Bucket policy set to public read", file=sys.stderr)
-        except Exception as e:
-            print(
-                f"[MinIO] Warning: Could not set bucket policy: {str(e)}",
-                file=sys.stderr,
-            )
+                print(f"[S3] Bucket check error: {str(e)}", file=sys.stderr)
 
     def upload_image(self, image_file, gift_id=None):
         """
-        Upload image to MinIO and return public URL.
+        Upload image to Supabase S3 and return public URL.
 
         Args:
             image_file: Django InMemoryUploadedFile or similar
@@ -153,36 +128,35 @@ class MinIOService:
             gift_prefix = f"{gift_id}/" if gift_id else ""
             file_key = f"images/{gift_prefix}{uuid.uuid4()}{file_ext}"
 
-            # Upload to MinIO using SDK
+            # Upload to Supabase S3
             print(
-                f"[MinIO] Uploading {file_key} (size: {len(img_bytes.getvalue())} bytes)",
+                f"[S3] Uploading {file_key} (size: {len(img_bytes.getvalue())} bytes)",
                 file=sys.stderr,
             )
 
-            # Use put_object from MinIO SDK (this works where boto3 fails)
-            result = self.client.put_object(
-                bucket_name=self.bucket_name,
-                object_name=file_key,
-                data=img_bytes,
-                length=len(img_bytes.getvalue()),
-                content_type="image/jpeg",
+            self.client.put_object(
+                Bucket=self.bucket_name,
+                Key=file_key,
+                Body=img_bytes.getvalue(),
+                ContentType="image/jpeg",
             )
 
             public_url = f"{self.public_url_prefix}/{file_key}"
-            print(f"[MinIO] Upload successful: {public_url}", file=sys.stderr)
+            print(f"[S3] Upload successful: {public_url}", file=sys.stderr)
             return public_url, file_key
 
-        except S3Error as e:
-            error_msg = f"S3 Error: {str(e)}"
-            print(f"[MinIO] S3Error: {error_msg}", file=sys.stderr)
+        except ClientError as e:
+            error_code = e.response.get("Error", {}).get("Code", "")
+            error_msg = e.response.get("Error", {}).get("Message", str(e))
+            print(f"[S3] ClientError ({error_code}): {error_msg}", file=sys.stderr)
             return None, None
         except Exception as e:
             error_msg = f"Upload error: {str(e)}"
-            print(f"[MinIO] Exception: {error_msg}", file=sys.stderr)
+            print(f"[S3] Exception: {error_msg}", file=sys.stderr)
             return None, None
 
     def delete_image(self, file_key):
-        """Delete image from MinIO."""
+        """Delete image from S3."""
         try:
             if not file_key:
                 return
@@ -191,10 +165,14 @@ class MinIOService:
             if file_key.startswith("http"):
                 file_key = file_key.replace(self.public_url_prefix + "/", "")
 
-            self.client.remove_object(self.bucket_name, file_key)
-            print(f"[MinIO] Deleted: {file_key}", file=sys.stderr)
+            self.client.delete_object(Bucket=self.bucket_name, Key=file_key)
+            print(f"[S3] Deleted: {file_key}", file=sys.stderr)
         except Exception as e:
-            print(f"[MinIO] Warning: Could not delete image: {e}", file=sys.stderr)
+            print(f"[S3] Warning: Could not delete image: {e}", file=sys.stderr)
+
+    def get_image_url(self, key):
+        """Get public URL for an image key."""
+        return f"{self.public_url_prefix}/{key}"
 
 
 # Singleton instance
@@ -202,7 +180,7 @@ _minio_service = None
 
 
 def get_minio_service():
-    """Get MinIO service instance."""
+    """Get S3 service instance."""
     global _minio_service
     if _minio_service is None:
         try:
