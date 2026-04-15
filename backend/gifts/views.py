@@ -515,8 +515,17 @@ class GiftImageUploadView(views.APIView):
                     status=status.HTTP_503_SERVICE_UNAVAILABLE,
                 )
 
-            # Upload image to MinIO
-            image_url = minio_service.upload_image(image_file, gift_id=gift.id)
+            # Upload image to MinIO (returns tuple: (url, key))
+            image_url, _ = minio_service.upload_image(image_file, gift_id=gift.id)
+
+            if not image_url:
+                return Response(
+                    {
+                        "detail": "Failed to upload image to MinIO.",
+                        "error": "UPLOAD_FAILED",
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
 
             # Update gift with image URL
             gift.image_url = image_url
