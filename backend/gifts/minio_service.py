@@ -181,37 +181,6 @@ class MinIOService:
             print(f"[MinIO] Exception: {error_msg}", file=sys.stderr)
             return None, None
 
-        except ClientError as e:
-            error_code = e.response.get("Error", {}).get("Code", "")
-            error_msg = e.response.get("Error", {}).get("Message", str(e))
-            import sys
-
-            print(f"[MinIO] ClientError ({error_code}): {error_msg}", file=sys.stderr)
-            if error_code == "403":
-                diagnose_msg = (
-                    f"Access denied uploading to MinIO.\n"
-                    f"  Endpoint: {self.endpoint_url}\n"
-                    f"  Bucket: {self.bucket_name}\n"
-                    f"  User: {self.access_key}\n"
-                    f"  Possible causes:\n"
-                    f"    - Credentials are incorrect\n"
-                    f"    - User lacks s3:PutObject permission\n"
-                    f"    - Bucket has restrictive policies\n"
-                    f"  Error: {error_msg}"
-                )
-                print(f"[MinIO] DIAGNOSIS: {diagnose_msg}", file=sys.stderr)
-                raise Exception(diagnose_msg)
-            else:
-                raise Exception(f"MinIO error: {error_msg}")
-        except Exception as e:
-            import sys
-
-            print(f"[MinIO] Error uploading image: {e}", file=sys.stderr)
-            import traceback
-
-            traceback.print_exc(file=sys.stderr)
-            raise
-
     def delete_image(self, file_key):
         """Delete image from MinIO."""
         try:
@@ -222,9 +191,10 @@ class MinIOService:
             if file_key.startswith("http"):
                 file_key = file_key.replace(self.public_url_prefix + "/", "")
 
-            self.client.delete_object(Bucket=self.bucket_name, Key=file_key)
-        except ClientError as e:
-            print(f"Warning: Could not delete image: {e}")
+            self.client.remove_object(self.bucket_name, file_key)
+            print(f"[MinIO] Deleted: {file_key}", file=sys.stderr)
+        except Exception as e:
+            print(f"[MinIO] Warning: Could not delete image: {e}", file=sys.stderr)
 
 
 # Singleton instance
