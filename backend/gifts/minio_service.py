@@ -1,22 +1,21 @@
 """
 MinIO S3 service for image uploads.
+Uses MinIO Python SDK for better compatibility.
 """
 
 import os
-import boto3
-from botocore.exceptions import ClientError
-from django.conf import settings
 import uuid
-from PIL import Image
+import sys
 from io import BytesIO
+from PIL import Image
+from minio import Minio
+from minio.error import S3Error
 
 
 class MinIOService:
-    """Service for uploading images to MinIO."""
+    """Service for uploading images to MinIO using MinIO SDK."""
 
     def __init__(self):
-        import sys
-
         self.endpoint_url = os.getenv(
             "MINIO_ENDPOINT", "https://minio-latest-2yx5.onrender.com"
         )
@@ -48,40 +47,30 @@ class MinIOService:
         )
 
         if not self.access_key or not self.secret_key:
-            print(
-                f"ERROR: MINIO credentials not configured!",
-                file=sys.stderr,
-            )
+            print(f"ERROR: MINIO credentials not configured!", file=sys.stderr)
             raise ValueError("MINIO credentials not configured")
 
-        # Create boto3 S3 client with SSL verification disabled for self-signed certs
-        import botocore.client
-        from botocore.client import Config
-
-        config = Config(
-            signature_version="s3v4",
-            retries={"max_attempts": 3, "mode": "standard"},
-            connect_timeout=10,
-            read_timeout=60,
+        # Create MinIO client
+        # MinIO SDK handles SSL verification and permissions better than boto3
+        endpoint_clean = self.endpoint_url.replace("https://", "").replace(
+            "http://", ""
         )
+        use_ssl = "https://" in self.endpoint_url
 
         try:
-            self.client = boto3.client(
-                "s3",
-                endpoint_url=self.endpoint_url,
-                aws_access_key_id=self.access_key,
-                aws_secret_access_key=self.secret_key,
-                region_name="us-east-1",
-                verify=False,  # Disable SSL verification for self-signed certs on Render
-                config=config,
+            self.client = Minio(
+                endpoint_clean,
+                access_key=self.access_key,
+                secret_key=self.secret_key,
+                secure=use_ssl,
+                region="us-east-1",
             )
             print(
-                f"MinIO client created successfully for endpoint: {self.endpoint_url}"
+                f"[MinIO] MinIO SDK client created for: {endpoint_clean}",
+                file=sys.stderr,
             )
         except Exception as e:
-            import sys
-
-            print(f"ERROR: Failed to create MinIO client: {e}", file=sys.stderr)
+            print(f"[MinIO] Error creating client: {str(e)}", file=sys.stderr)
             raise
 
         # Ensure bucket exists
@@ -90,40 +79,22 @@ class MinIOService:
     def _ensure_bucket_exists(self):
         """Create bucket if it doesn't exist."""
         try:
-            response = self.client.head_bucket(Bucket=self.bucket_name)
-            print(f"Bucket '{self.bucket_name}' exists")
-        except ClientError as e:
-            error_code = e.response.get("Error", {}).get("Code", "")
-            if error_code == "404":
-                print(f"Bucket '{self.bucket_name}' does not exist, creating...")
-                try:
-                    self.client.create_bucket(Bucket=self.bucket_name)
-                    print(f"Bucket '{self.bucket_name}' created successfully")
-                    # Make bucket public
-                    self._make_bucket_public()
-                except ClientError as create_error:
-                    import sys
-
-                    print(
-                        f"ERROR: Could not create bucket: {create_error}",
-                        file=sys.stderr,
-                    )
-                    # Don't raise - let it fail later when actually trying to upload
-            elif error_code == "403":
-                import sys
-
-                print(
-                    f"ERROR: Access denied to bucket '{self.bucket_name}'. Check credentials and bucket permissions.",
-                    file=sys.stderr,
-                )
-                # Don't raise - let it fail later with specific upload error
+            exists = self.client.bucket_exists(self.bucket_name)
+            if exists:
+                print(f"[MinIO] Bucket '{self.bucket_name}' exists", file=sys.stderr)
             else:
-                import sys
-
-                print(f"ERROR: Could not check bucket: {e}", file=sys.stderr)
+                print(f"[MinIO] Creating bucket '{self.bucket_name}'", file=sys.stderr)
+                self.client.make_bucket(self.bucket_name)
+                print(f"[MinIO] Bucket created successfully", file=sys.stderr)
+                self._make_bucket_public()
+        except Exception as e:
+            print(f"[MinIO] Bucket check error: {str(e)}", file=sys.stderr)
+            # Don't raise - let it fail later with specific error
 
     def _make_bucket_public(self):
-        """Make bucket public for read access."""
+        """Set bucket policy for public read access."""
+        import json
+
         policy = {
             "Version": "2012-10-17",
             "Statement": [
@@ -135,14 +106,14 @@ class MinIOService:
                 }
             ],
         }
-        import json
-
         try:
-            self.client.put_bucket_policy(
-                Bucket=self.bucket_name, Policy=json.dumps(policy)
+            self.client.set_bucket_policy(self.bucket_name, json.dumps(policy))
+            print(f"[MinIO] Bucket policy set to public read", file=sys.stderr)
+        except Exception as e:
+            print(
+                f"[MinIO] Warning: Could not set bucket policy: {str(e)}",
+                file=sys.stderr,
             )
-        except ClientError as e:
-            print(f"Warning: Could not set bucket policy: {e}")
 
     def upload_image(self, image_file, gift_id=None):
         """
@@ -153,10 +124,10 @@ class MinIOService:
             gift_id: Optional UUID for organizing images
 
         Returns:
-            Tuple of (public_url, file_key)
+            Tuple of (public_url, file_key) or (None, None) on error
         """
         if not image_file:
-            return None
+            return None, None
 
         try:
             # Optimize image
@@ -182,21 +153,33 @@ class MinIOService:
             gift_prefix = f"{gift_id}/" if gift_id else ""
             file_key = f"images/{gift_prefix}{uuid.uuid4()}{file_ext}"
 
-            # Upload to MinIO
+            # Upload to MinIO using SDK
             print(
-                f"Uploading image to {self.endpoint_url}/{self.bucket_name}/{file_key} (size: {len(img_bytes.getvalue())} bytes)"
+                f"[MinIO] Uploading {file_key} (size: {len(img_bytes.getvalue())} bytes)",
+                file=sys.stderr,
             )
-            self.client.put_object(
-                Bucket=self.bucket_name,
-                Key=file_key,
-                Body=img_bytes.getvalue(),
-                ContentType="image/jpeg",
-                Metadata={"gift-id": str(gift_id)} if gift_id else {},
+
+            # Use put_object from MinIO SDK (this works where boto3 fails)
+            result = self.client.put_object(
+                bucket_name=self.bucket_name,
+                object_name=file_key,
+                data=img_bytes,
+                length=len(img_bytes.getvalue()),
+                content_type="image/jpeg",
             )
 
             public_url = f"{self.public_url_prefix}/{file_key}"
-            print(f"Image uploaded successfully: {public_url}")
-            return public_url
+            print(f"[MinIO] Upload successful: {public_url}", file=sys.stderr)
+            return public_url, file_key
+
+        except S3Error as e:
+            error_msg = f"S3 Error: {str(e)}"
+            print(f"[MinIO] S3Error: {error_msg}", file=sys.stderr)
+            return None, None
+        except Exception as e:
+            error_msg = f"Upload error: {str(e)}"
+            print(f"[MinIO] Exception: {error_msg}", file=sys.stderr)
+            return None, None
 
         except ClientError as e:
             error_code = e.response.get("Error", {}).get("Code", "")
