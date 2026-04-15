@@ -26,12 +26,25 @@ class MinIOService:
         if not self.access_key or not self.secret_key:
             raise ValueError("MINIO credentials not configured")
 
+        # Create boto3 S3 client with SSL verification disabled for self-signed certs
+        import botocore.client
+        from botocore.client import Config
+
+        config = Config(
+            signature_version="s3v4",
+            retries={"max_attempts": 3, "mode": "standard"},
+            connect_timeout=5,
+            read_timeout=60,
+        )
+
         self.client = boto3.client(
             "s3",
             endpoint_url=self.endpoint_url,
             aws_access_key_id=self.access_key,
             aws_secret_access_key=self.secret_key,
             region_name="us-east-1",
+            verify=False,  # Disable SSL verification for self-signed certs on Render
+            config=config,
         )
 
         # Ensure bucket exists

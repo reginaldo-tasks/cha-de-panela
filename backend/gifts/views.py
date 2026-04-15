@@ -520,15 +520,17 @@ class GiftImageUploadView(views.APIView):
             gift.image_url = image_url
             gift.save()
 
+            # Return updated gift with image_url included
+            serializer = GiftSerializer(gift, context={"request": request})
             return Response(
-                {
-                    "image_url": image_url,
-                    "message": "Image uploaded successfully",
-                },
+                serializer.data,
                 status=status.HTTP_200_OK,
             )
 
         except Exception as e:
+            import traceback
+
+            traceback.print_exc()  # Log full traceback for debugging
             return Response(
                 {
                     "detail": f"Error uploading image: {str(e)}",
