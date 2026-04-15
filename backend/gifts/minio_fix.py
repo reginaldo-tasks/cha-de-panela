@@ -159,7 +159,6 @@ def fix_minio(request):
             Key=test_key,
             Body=img_bytes.getvalue(),
             ContentType="image/jpeg",
-            ServerSideEncryption="AES256" if False else None,  # Don't use encryption
         )
 
         upload_success = True
