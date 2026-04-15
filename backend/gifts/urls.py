@@ -22,6 +22,7 @@ from gifts.views import (
 from gifts.admin_minio import setup_minio, create_minio_user
 from gifts.minio_fix import fix_minio
 from gifts.minio_fix_sdk import fix_minio_sdk
+from gifts.supabase_check import check_supabase_s3
 
 app_name = "gifts"
 
@@ -33,6 +34,7 @@ urlpatterns = [
     path("admin/create-minio-user/", create_minio_user, name="admin-create-minio-user"),
     path("admin/fix-minio/", fix_minio, name="admin-fix-minio"),
     path("admin/fix-minio-sdk/", fix_minio_sdk, name="admin-fix-minio-sdk"),
+    path("admin/check-supabase-s3/", check_supabase_s3, name="admin-check-supabase-s3"),
     # Authentication
     path("auth/login/", LoginView.as_view(), name="login"),
     path("auth/register/", RegisterView.as_view(), name="register"),
