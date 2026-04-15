@@ -10,6 +10,7 @@ interface GiftsContextType {
   updateGift: (id: string, data: UpdateGiftInput) => Promise<Gift>;
   deleteGift: (id: string) => Promise<void>;
   markAsSelected: (id: string) => Promise<void>;
+  uploadGiftImage: (id: string, file: File) => Promise<Gift>;
   refreshGifts: () => Promise<void>;
 }
 
@@ -101,6 +102,12 @@ export function GiftsProvider({ children }: { children: ReactNode }) {
     ));
   };
 
+  const uploadGiftImage = async (id: string, file: File): Promise<Gift> => {
+    const updated = await api.upload.uploadGiftImage(id, file);
+    setGifts(gifts.map(g => g.id === id ? updated : g));
+    return updated;
+  };
+
   return (
     <GiftsContext.Provider value={{
       gifts,
@@ -109,6 +116,7 @@ export function GiftsProvider({ children }: { children: ReactNode }) {
       updateGift,
       deleteGift,
       markAsSelected,
+      uploadGiftImage,
       refreshGifts
     }}>
       {children}

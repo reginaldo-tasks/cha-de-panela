@@ -225,6 +225,30 @@ export const api = {
 
       return response.json();
     },
+
+    uploadGiftImage: async (giftId: string, file: File): Promise<import('../types').Gift> => {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const token = getAuthToken();
+      const headers: HeadersInit = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/gifts/${giftId}/upload-image/`, {
+        method: 'POST',
+        headers,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ message: 'Erro ao fazer upload da imagem' }));
+        throw new Error(error.message || 'Erro ao fazer upload da imagem');
+      }
+
+      return response.json();
+    },
   },
 };
 

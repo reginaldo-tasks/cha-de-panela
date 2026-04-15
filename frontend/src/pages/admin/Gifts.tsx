@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AdminSidebar } from '@/components/AdminSidebar';
 import { GiftForm } from '@/components/GiftForm';
+import { ImageUploadDialog } from '@/components/ImageUploadDialog';
 import { useGifts } from '@/contexts/GiftsContext';
 import { Gift, CreateGiftInput } from '@/types';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Trash2, Gift as GiftIcon, Loader2, Heart } from 'lucide-react';
+import { Plus, Trash2, Gift as GiftIcon, Loader2, Heart, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Gifts() {
@@ -31,6 +32,7 @@ export default function Gifts() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingGift, setEditingGift] = useState<Gift | null>(null);
   const [deletingGift, setDeletingGift] = useState<Gift | null>(null);
+  const [uploadingGift, setUploadingGift] = useState<Gift | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   const formatPrice = (price: number) => {
@@ -97,6 +99,15 @@ export default function Gifts() {
   const openNewForm = () => {
     setEditingGift(null);
     setIsFormOpen(true);
+  };
+
+  const openImageUpload = (gift: Gift) => {
+    setUploadingGift(gift);
+  };
+
+  const handleImageUploadSuccess = (updatedGift: Gift) => {
+    setUploadingGift(null);
+    // The gifts context should be automatically updated via the uploadGiftImage method
   };
 
   return (
@@ -173,7 +184,15 @@ export default function Gifts() {
                   </div>
                   <div className="flex gap-2 w-full sm:w-auto">
                     <Button
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full sm:w-auto gap-2"
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-1 sm:flex-none gap-2"
+                      onClick={() => openImageUpload(gift)}
+                      variant="default"
+                    >
+                      <ImageIcon className="h-4 w-4" />
+                      <span className="hidden sm:inline">Imagem</span>
+                    </Button>
+                    <Button
+                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-1 sm:flex-none gap-2"
                       onClick={() => openEditForm(gift)}
                       variant="outline"
                     >
@@ -235,6 +254,18 @@ export default function Gifts() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Image Upload Dialog */}
+        {uploadingGift && (
+          <ImageUploadDialog
+            open={!!uploadingGift}
+            onOpenChange={(open) => {
+              if (!open) setUploadingGift(null);
+            }}
+            gift={uploadingGift}
+            onUploadSuccess={handleImageUploadSuccess}
+          />
+        )}
       </main>
     </div>
   );
