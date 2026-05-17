@@ -71,43 +71,37 @@ WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
 
 # Database Configuration
-# Priority: DATABASE_URL (for Neon, Render, Vercel) > DB_ENGINE with individual vars > SQLite (default)
+# Priority: DATABASE_URL (for Neon, Render, Vercel) > SQLite (local dev)
+import dj_database_url
+
 database_url = os.getenv('DATABASE_URL')
+
+# In production, DATABASE_URL is REQUIRED
+if not DEBUG and not database_url:
+    raise ValueError(
+        "DATABASE_URL environment variable is required in production. "
+        "Configure your PostgreSQL/Neon connection string in Vercel."
+    )
 
 if database_url:
     # Use DATABASE_URL (recommended for Neon DB, Render, Vercel PostgreSQL)
-    import dj_database_url
     DATABASES = {
         'default': dj_database_url.config(
             default=database_url,
             conn_max_age=int(os.getenv('DB_CONN_MAX_AGE', '600')),
+            # Force SSL in production for security
             ssl_require=True if not DEBUG else False
         )
     }
+    # Ensure SSL mode is set correctly for Render/Neon PostgreSQL
+    if 'OPTIONS' not in DATABASES['default']:
+        DATABASES['default']['OPTIONS'] = {}
+    DATABASES['default']['OPTIONS']['sslmode'] = 'require' if not DEBUG else 'prefer'
 else:
-    # Fallback: Check for individual database configuration
-    db_engine = os.getenv('DB_ENGINE', 'sqlite3')
-    
-    if db_engine == 'postgresql':
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.getenv('DB_NAME'),
-                'USER': os.getenv('DB_USER'),
-                'PASSWORD': os.getenv('DB_PASSWORD'),
-                'HOST': os.getenv('DB_HOST'),
-                'PORT': os.getenv('DB_PORT', '5432'),
-                'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '600')),
-                'OPTIONS': {
-                    'sslmode': 'require' if not DEBUG else 'disable',
-                },
-            }
-        }
-    else:
-        # SQLite for local development
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
+    # SQLite for local development only
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
                 'NAME': BASE_DIR / 'db.sqlite3',
             }
         }
