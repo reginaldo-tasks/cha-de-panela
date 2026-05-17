@@ -1,7 +1,6 @@
 """
 Vercel Blob Storage service for image uploads.
-Uses Vercel Blob API for cloud storage (recommended).
-Fallback to Supabase S3 if Vercel Blob token not configured.
+Uses Vercel Blob API for cloud storage ONLY.
 """
 
 import os
@@ -21,74 +20,15 @@ class BlobStorageService:
     def __init__(self):
         # Vercel Blob Storage token
         self.token = os.getenv("S3_READ_WRITE_TOKEN", "").strip()
-        self.use_vercel_blob = bool(self.token)
-        self.s3_client = None
-
-        if self.use_vercel_blob:
-            print("[BLOB] Using Vercel Blob Storage", file=sys.stderr)
-            print(
-                f"[BLOB] Token configured: {'✓' if self.token else '✗'}",
-                file=sys.stderr,
-            )
-        else:
-            print(
-                "[BLOB] Vercel Blob token not found, using Supabase S3 as primary",
-                file=sys.stderr,
-            )
         
-        # Always try to initialize Supabase as fallback
-        self._init_supabase_fallback()
-
-    def _init_supabase_fallback(self):
-        """Initialize Supabase S3 as fallback storage."""
-        try:
-            import boto3
-            from botocore.client import Config
-
-            self.endpoint_url = os.getenv(
-                "SUPABASE_S3_ENDPOINT",
-                "https://semrcxlyfncmanrklvon.storage.supabase.co/storage/v1/s3",
-            )
-            self.access_key = os.getenv("SUPABASE_ACCESS_KEY", "").strip()
-            self.secret_key = os.getenv("SUPABASE_SECRET_KEY", "").strip()
-            self.region = os.getenv("SUPABASE_REGION", "us-east-2")
-            self.bucket_name = "gifts"
-
-            if not self.access_key or not self.secret_key:
-                print(
-                    "[BLOB] Warning: Neither Vercel Blob nor Supabase S3 configured",
-                    file=sys.stderr,
-                )
-                return
-
-            config = Config(
-                signature_version="s3v4",
-                retries={"max_attempts": 3, "mode": "standard"},
-                connect_timeout=10,
-                read_timeout=60,
-            )
-
-            self.s3_client = boto3.client(
-                "s3",
-                endpoint_url=self.endpoint_url,
-                aws_access_key_id=self.access_key,
-                aws_secret_access_key=self.secret_key,
-                region_name=self.region,
-                config=config,
-            )
-            self.public_url_prefix = f"https://semrcxlyfncmanrklvon.storage.supabase.co/storage/v1/object/public/{self.bucket_name}"
-            print(
-                "[BLOB] Supabase S3 fallback initialized (legacy storage)",
-                file=sys.stderr,
-            )
-        except ImportError:
-            print("[BLOB] boto3 not available for S3 fallback", file=sys.stderr)
-        except Exception as e:
-            print(f"[BLOB] Supabase fallback init error: {str(e)}", file=sys.stderr)
+        if not self.token:
+            raise ValueError("S3_READ_WRITE_TOKEN environment variable is not configured")
+        
+        print("[BLOB] Using Vercel Blob Storage", file=sys.stderr)
 
     def upload_image(self, image_file, gift_id=None):
         """
-        Upload image to Vercel Blob Storage or fallback to Supabase S3.
+        Upload image to Vercel Blob Storage.
 
         Args:
             image_file: Django InMemoryUploadedFile or similar
@@ -97,27 +37,11 @@ class BlobStorageService:
         Returns:
             tuple: (public_url, file_path)
         """
-        # Try Vercel Blob first if token is configured
-        if self.use_vercel_blob:
-            try:
-                return self._upload_to_vercel_blob(image_file, gift_id)
-            except Exception as e:
-                print(
-                    f"[BLOB] Vercel Blob upload failed, falling back to Supabase S3: {str(e)}",
-                    file=sys.stderr,
-                )
-                # Fall through to Supabase
-        
-        # Use Supabase S3
-        return self._upload_to_supabase_s3(image_file, gift_id)
-
-    def _upload_to_vercel_blob(self, image_file, gift_id=None):
-        """Upload image to Vercel Blob Storage."""
         try:
             # Optimize image
             image_path, optimized_image = self._optimize_image(image_file)
 
-            # Generate unique filename
+            # Generate unique pathname
             if gift_id:
                 pathname = f"gifts/{gift_id}/{image_path}"
             else:
@@ -128,13 +52,8 @@ class BlobStorageService:
                 "Authorization": f"Bearer {self.token}",
             }
 
-            files = {"file": (image_path, optimized_image, "application/octet-stream")}
-
-            url = f"{self.VERCEL_BLOB_API}"
-            params = {"pathname": pathname}
-
             response = requests.put(
-                f"{url}?pathname={pathname}",
+                f"{self.VERCEL_BLOB_API}/?pathname={pathname}",
                 data=optimized_image.getvalue(),
                 headers=headers,
                 timeout=30,
@@ -147,41 +66,12 @@ class BlobStorageService:
                 return public_url, pathname
             else:
                 error_msg = f"Vercel Blob upload failed: {response.status_code} - {response.text}"
-                print(f"[BLOB] {error_msg}", file=sys.stderr)
+                print(f"[BLOB] ERROR: {error_msg}", file=sys.stderr)
                 raise Exception(error_msg)
 
         except Exception as e:
-            print(f"[BLOB] Error uploading to Vercel: {str(e)}", file=sys.stderr)
-            raise
-
-    def _upload_to_supabase_s3(self, image_file, gift_id=None):
-        """Upload image to Supabase S3 (fallback)."""
-        try:
-            if not hasattr(self, "s3_client"):
-                raise Exception("S3 client not initialized")
-
-            image_path, optimized_image = self._optimize_image(image_file)
-
-            # Build S3 key
-            if gift_id:
-                s3_key = f"gifts/{gift_id}/{image_path}"
-            else:
-                s3_key = f"gifts/{image_path}"
-
-            # Upload to S3
-            self.s3_client.upload_fileobj(
-                optimized_image,
-                self.bucket_name,
-                s3_key,
-                ExtraArgs={"ContentType": "image/jpeg"},
-            )
-
-            public_url = f"{self.public_url_prefix}/{s3_key}"
-            print(f"[BLOB] S3 upload success: {s3_key}", file=sys.stderr)
-            return public_url, s3_key
-
-        except Exception as e:
-            print(f"[BLOB] Error uploading to Supabase S3: {str(e)}", file=sys.stderr)
+            error_msg = f"Error uploading to Vercel Blob: {str(e)}"
+            print(f"[BLOB] ERROR: {error_msg}", file=sys.stderr)
             raise
 
     def _optimize_image(self, image_file):
@@ -208,31 +98,24 @@ class BlobStorageService:
             output.seek(0)
 
             # Generate filename
-            file_ext = "jpg"
-            file_name = f"{uuid.uuid4()}.{file_ext}"
+            file_name = f"{uuid.uuid4()}.jpg"
 
             return file_name, output
 
         except Exception as e:
-            print(f"[BLOB] Image optimization error: {str(e)}", file=sys.stderr)
+            error_msg = f"Image optimization error: {str(e)}"
+            print(f"[BLOB] ERROR: {error_msg}", file=sys.stderr)
             raise
 
     def delete_image(self, file_path):
-        """Delete image from storage."""
-        if self.use_vercel_blob:
-            return self._delete_from_vercel_blob(file_path)
-        else:
-            return self._delete_from_supabase_s3(file_path)
-
-    def _delete_from_vercel_blob(self, file_path):
-        """Delete image from Vercel Blob."""
+        """Delete image from Vercel Blob Storage."""
         try:
             headers = {
                 "Authorization": f"Bearer {self.token}",
             }
 
             response = requests.delete(
-                f"{self.VERCEL_BLOB_API}?pathname={file_path}",
+                f"{self.VERCEL_BLOB_API}/?pathname={file_path}",
                 headers=headers,
                 timeout=30,
             )
@@ -241,28 +124,11 @@ class BlobStorageService:
                 print(f"[BLOB] Delete success: {file_path}", file=sys.stderr)
                 return True
             else:
-                print(
-                    f"[BLOB] Delete failed: {response.status_code}",
-                    file=sys.stderr,
-                )
+                print(f"[BLOB] Delete failed: {response.status_code}", file=sys.stderr)
                 return False
 
         except Exception as e:
-            print(f"[BLOB] Error deleting from Vercel: {str(e)}", file=sys.stderr)
-            return False
-
-    def _delete_from_supabase_s3(self, file_path):
-        """Delete image from Supabase S3."""
-        try:
-            if not hasattr(self, "s3_client"):
-                return False
-
-            self.s3_client.delete_object(Bucket=self.bucket_name, Key=file_path)
-            print(f"[BLOB] S3 delete success: {file_path}", file=sys.stderr)
-            return True
-
-        except Exception as e:
-            print(f"[BLOB] Error deleting from S3: {str(e)}", file=sys.stderr)
+            print(f"[BLOB] Error deleting: {str(e)}", file=sys.stderr)
             return False
 
 
