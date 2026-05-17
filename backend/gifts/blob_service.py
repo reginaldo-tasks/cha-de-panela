@@ -22,6 +22,7 @@ class BlobStorageService:
         # Vercel Blob Storage token
         self.token = os.getenv("S3_READ_WRITE_TOKEN", "").strip()
         self.use_vercel_blob = bool(self.token)
+        self.s3_client = None
 
         if self.use_vercel_blob:
             print("[BLOB] Using Vercel Blob Storage", file=sys.stderr)
@@ -31,10 +32,12 @@ class BlobStorageService:
             )
         else:
             print(
-                "[BLOB] Vercel Blob token not found, using Supabase S3 fallback",
+                "[BLOB] Vercel Blob token not found, using Supabase S3 as primary",
                 file=sys.stderr,
             )
-            self._init_supabase_fallback()
+        
+        # Always try to initialize Supabase as fallback
+        self._init_supabase_fallback()
 
     def _init_supabase_fallback(self):
         """Initialize Supabase S3 as fallback storage."""
@@ -94,10 +97,19 @@ class BlobStorageService:
         Returns:
             tuple: (public_url, file_path)
         """
+        # Try Vercel Blob first if token is configured
         if self.use_vercel_blob:
-            return self._upload_to_vercel_blob(image_file, gift_id)
-        else:
-            return self._upload_to_supabase_s3(image_file, gift_id)
+            try:
+                return self._upload_to_vercel_blob(image_file, gift_id)
+            except Exception as e:
+                print(
+                    f"[BLOB] Vercel Blob upload failed, falling back to Supabase S3: {str(e)}",
+                    file=sys.stderr,
+                )
+                # Fall through to Supabase
+        
+        # Use Supabase S3
+        return self._upload_to_supabase_s3(image_file, gift_id)
 
     def _upload_to_vercel_blob(self, image_file, gift_id=None):
         """Upload image to Vercel Blob Storage."""
