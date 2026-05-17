@@ -72,20 +72,21 @@ ASGI_APPLICATION = 'core.asgi.application'
 
 # Database Configuration
 # CRITICAL: DATABASE_URL is MANDATORY in Vercel/production
+# Supports both DATABASE_URL and Neon's DB_DATABASE_URL
 import dj_database_url
 
-database_url = os.getenv('DATABASE_URL')
+database_url = os.getenv('DATABASE_URL') or os.getenv('DB_DATABASE_URL')
 
 # Always require DATABASE_URL if not in local development
 # (Vercel, production, or any cloud deployment must have it)
 if not database_url and os.getenv('VERCEL'):
     raise ValueError(
-        "DATABASE_URL environment variable is REQUIRED in Vercel production. "
+        "DATABASE_URL or DB_DATABASE_URL environment variable is REQUIRED in Vercel production. "
         "Configure your PostgreSQL connection string in Environment Variables."
     )
 
 if database_url:
-    # Use DATABASE_URL - this is the standard approach for cloud deployments
+    # Use DATABASE_URL or DB_DATABASE_URL - standard for cloud deployments
     DATABASES = {
         'default': dj_database_url.config(
             default=database_url,
@@ -93,7 +94,7 @@ if database_url:
             ssl_require=True
         )
     }
-    # Ensure SSL mode is set correctly for Render/Neon PostgreSQL
+    # Ensure SSL mode is set correctly for Neon/Render PostgreSQL
     if 'OPTIONS' not in DATABASES['default']:
         DATABASES['default']['OPTIONS'] = {}
     DATABASES['default']['OPTIONS']['sslmode'] = 'require'
