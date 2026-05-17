@@ -2,11 +2,13 @@
 Utility functions for Gift Registry API.
 """
 import re
+import unicodedata
 
 
 def generate_slug(couple_name: str) -> str:
     """
     Convert a couple name to a URL-friendly slug.
+    Example: "João & Maria" -> "joao-maria"
     Example: "Iara & Ramon" -> "iara-ramon"
     
     Args:
@@ -20,6 +22,10 @@ def generate_slug(couple_name: str) -> str:
     
     # Convert to lowercase
     slug = couple_name.lower().strip()
+    
+    # Normalize unicode and remove accents
+    slug = unicodedata.normalize('NFD', slug)
+    slug = ''.join(c for c in slug if unicodedata.category(c) != 'Mn')
     
     # Remove ampersands
     slug = slug.replace("&", "")

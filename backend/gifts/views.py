@@ -503,25 +503,25 @@ class GiftImageUploadView(views.APIView):
             )
 
         try:
-            from gifts.minio_service import get_minio_service
+            from gifts.blob_service import get_blob_service
 
-            minio_service = get_minio_service()
-            if not minio_service:
+            blob_service = get_blob_service()
+            if not blob_service:
                 return Response(
                     {
                         "detail": "Image upload service is not configured.",
-                        "error": "MINIO_NOT_CONFIGURED",
+                        "error": "BLOB_NOT_CONFIGURED",
                     },
                     status=status.HTTP_503_SERVICE_UNAVAILABLE,
                 )
 
-            # Upload image to MinIO (returns tuple: (url, key))
-            image_url, _ = minio_service.upload_image(image_file, gift_id=gift.id)
+            # Upload image to Vercel Blob Storage or Supabase S3 (returns tuple: (url, key))
+            image_url, _ = blob_service.upload_image(image_file, gift_id=gift.id)
 
             if not image_url:
                 return Response(
                     {
-                        "detail": "Failed to upload image to MinIO.",
+                        "detail": "Failed to upload image to storage.",
                         "error": "UPLOAD_FAILED",
                     },
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR,

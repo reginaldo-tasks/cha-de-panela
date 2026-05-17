@@ -70,32 +70,47 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 ASGI_APPLICATION = 'core.asgi.application'
 
-# Database
-# Banco padrão local (desenvolvimento/testes)
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
+# Database Configuration
+# Priority: DATABASE_URL (for Neon, Render, Vercel) > DB_ENGINE with individual vars > SQLite (default)
+database_url = os.getenv('DATABASE_URL')
 
-# PostgreSQL connection with environment variables
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME', 'chapanela'),
-        'USER': os.getenv('DB_USER', 'chapanela_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'dpg-d770ol9aae7s73dilprg-a.oregon-postgres.render.com'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'CONN_MAX_AGE': 600,
-    }
-}
-
-# Alternative: Use DATABASE_URL if provided (for Render internal connections)
-if os.getenv('DATABASE_URL'):
+if database_url:
+    # Use DATABASE_URL (recommended for Neon DB, Render, Vercel PostgreSQL)
     import dj_database_url
-    DATABASES['default'] = dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=database_url,
+            conn_max_age=int(os.getenv('DB_CONN_MAX_AGE', '600')),
+            ssl_require=True if not DEBUG else False
+        )
+    }
+else:
+    # Fallback: Check for individual database configuration
+    db_engine = os.getenv('DB_ENGINE', 'sqlite3')
+    
+    if db_engine == 'postgresql':
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.getenv('DB_NAME'),
+                'USER': os.getenv('DB_USER'),
+                'PASSWORD': os.getenv('DB_PASSWORD'),
+                'HOST': os.getenv('DB_HOST'),
+                'PORT': os.getenv('DB_PORT', '5432'),
+                'CONN_MAX_AGE': int(os.getenv('DB_CONN_MAX_AGE', '600')),
+                'OPTIONS': {
+                    'sslmode': 'require' if not DEBUG else 'disable',
+                },
+            }
+        }
+    else:
+        # SQLite for local development
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
