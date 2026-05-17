@@ -1,6 +1,10 @@
 import { put } from "@vercel/blob";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-export default async function handler(req: any, res: any) {
+export default async function handler(
+    req: VercelRequest,
+    res: VercelResponse
+) {
     if (req.method !== "POST") {
         return res.status(405).json({ error: "Method not allowed" });
     }
@@ -14,16 +18,16 @@ export default async function handler(req: any, res: any) {
                 .json({ error: "S3_READ_WRITE_TOKEN not configured" });
         }
 
-        // Get image buffer from request body
-        const buffer = req.body;
+        // req.body is a Buffer in Vercel
+        const buffer = req.body as Buffer;
         if (!buffer || buffer.length === 0) {
+            console.error("[UPLOAD] No image data provided, buffer:", typeof buffer);
             return res.status(400).json({ error: "No image data provided" });
         }
 
         // Get gift_id from query or headers
         const giftId = req.query.gift_id || req.headers["x-gift-id"];
-        const fileName = req.headers["x-file-name"] || "image.jpg";
-
+        const fileName = (req.headers["x-file-name"] as string) || "image.jpg";
         // Generate pathname
         const timestamp = Date.now();
         const pathname = giftId
