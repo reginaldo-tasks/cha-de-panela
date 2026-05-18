@@ -226,7 +226,7 @@ export const api = {
         headers['Authorization'] = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${API_BASE_URL}/upload/image`, {
+      const response = await fetch(`${API_BASE_URL}/upload/image/`, {
         method: 'POST',
         headers,
         body: formData,
