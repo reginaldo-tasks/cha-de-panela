@@ -24,13 +24,14 @@ class BlobStorageService:
     def __init__(self):
         print(f"[BLOB] Using Vercel Blob Storage via {self.BLOB_UPLOAD_API}", file=sys.stderr)
 
-    def upload_image(self, image_file, gift_id=None):
+    def upload_image(self, image_file, gift_id=None, couple_id=None):
         """
         Upload image to Vercel Blob Storage via Node.js wrapper.
 
         Args:
             image_file: Django InMemoryUploadedFile or similar
-            gift_id: Optional UUID for organizing images
+            gift_id: Optional UUID for gift images
+            couple_id: Optional UUID for couple images
 
         Returns:
             tuple: (public_url, file_path)
@@ -47,11 +48,14 @@ class BlobStorageService:
                 "x-file-name": image_path,
             }
 
-            # Add gift_id if provided
+            # Add gift_id or couple_id if provided
             params = {}
             if gift_id:
                 headers["x-gift-id"] = str(gift_id)
                 params["gift_id"] = str(gift_id)
+            elif couple_id:
+                headers["x-couple-id"] = str(couple_id)
+                params["couple_id"] = str(couple_id)
 
             # Upload via wrapper API
             response = requests.post(
