@@ -5,6 +5,7 @@ Database models for Gift Registry application.
 from django.db import models
 from django.contrib.auth.models import User
 import uuid
+from django.db.models import JSONField
 
 
 class Couple(models.Model):
@@ -23,6 +24,19 @@ class Couple(models.Model):
     biography = models.TextField(blank=True, null=True)
     image_url = models.URLField(max_length=500, blank=True, null=True)
     qr_code_url = models.URLField(max_length=500, blank=True, null=True)
+    theme = models.CharField(
+        max_length=20,
+        choices=[
+            ('rose', 'Rosa'),
+            ('purple', 'Roxo'),
+            ('blue', 'Azul'),
+            ('emerald', 'Esmeralda'),
+            ('amber', 'Âmbar'),
+            ('orange', 'Laranja'),
+        ],
+        default='rose',
+        blank=True,
+    )
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -56,6 +70,14 @@ class Gift(models.Model):
     category = models.CharField(max_length=100, blank=True, null=True, db_index=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     priority = models.IntegerField(default=1, db_index=True)
+    
+    # Donation options - array of 3 values in cents (stored as integers)
+    donation_options = JSONField(
+        default=list,
+        null=True,
+        blank=True,
+        help_text="Array com 3 valores de doação em centavos (ex: [50000, 100000, 150000])"
+    )
 
     status = models.CharField(
         max_length=50, choices=STATUS_CHOICES, default="available", db_index=True

@@ -32,6 +32,7 @@ export interface Gift {
   url?: string | null;
   is_selected?: boolean;
   isSelected?: boolean;
+  donation_options?: number[] | null;
   donations?: Donation[];
   total_donated?: number;
   remaining_amount?: number;
@@ -65,6 +66,10 @@ export interface CreateGiftInput {
   price?: number | string;
   image_file?: File;  // File object instead of URL
   category?: string;
+  donation_option_1?: number;
+  donation_option_2?: number;
+  donation_option_3?: number;
+  donation_options?: number[] | null;
 }
 
 export interface UpdateGiftInput extends Partial<CreateGiftInput> {

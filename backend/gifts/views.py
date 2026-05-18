@@ -370,12 +370,15 @@ class DonateGiftView(generics.GenericAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        # Convert amount from cents to decimal (frontend sends in cents)
+        amount_decimal = amount / 100
+
         # Create donation (with fallback if table doesn't exist)
         try:
             from gifts.models import Donation
 
             donation = Donation.objects.create(
-                gift=gift, donor_name=str(donor_name).strip(), amount=amount
+                gift=gift, donor_name=str(donor_name).strip(), amount=amount_decimal
             )
         except Exception as e:
             error_msg = str(e)

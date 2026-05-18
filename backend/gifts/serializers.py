@@ -38,6 +38,7 @@ class CoupleSerializer(serializers.ModelSerializer):
             "biography",
             "image_url",
             "qr_code_url",
+            "theme",
             "user",
             "created_at",
             "updated_at",
@@ -85,6 +86,7 @@ class GiftSerializer(serializers.ModelSerializer):
     total_donated = serializers.SerializerMethodField()
     remaining_amount = serializers.SerializerMethodField()
     donation_percentage = serializers.SerializerMethodField()
+    donations = serializers.SerializerMethodField()
     title = serializers.CharField(
         required=False, allow_blank=True, write_only=True
     )  # Accept 'title' as alias for 'name'
@@ -105,10 +107,12 @@ class GiftSerializer(serializers.ModelSerializer):
             "reserved_by",
             "url",
             "image_url",
+            "donation_options",
             "is_selected",
             "total_donated",
             "remaining_amount",
             "donation_percentage",
+            "donations",
             "created_at",
             "updated_at",
         ]
@@ -120,6 +124,7 @@ class GiftSerializer(serializers.ModelSerializer):
             "total_donated",
             "remaining_amount",
             "donation_percentage",
+            "donations",
             "created_at",
             "updated_at",
         ]
@@ -170,11 +175,25 @@ class GiftSerializer(serializers.ModelSerializer):
                 total=Sum("amount")
             )["total"]
             total_donated = float(total_donated) if total_donated else 0.0
-            percentage = min(100, (total_donated / gift_price) * 100)
+            if gift_price == 0:
+                percentage = 0.0
+            else:
+                percentage = min(100, (total_donated / gift_price) * 100)
             return percentage
         except Exception:
             # Return 0 if donations table doesn't exist yet
             return 0.0
+
+    def get_donations(self, obj):
+        """Get all donations for this gift"""
+        try:
+            from gifts.models import Donation
+
+            donations = Donation.objects.filter(gift=obj).order_by("-created_at")
+            return DonationSerializer(donations, many=True).data
+        except Exception:
+            # Return empty list if donations table doesn't exist yet
+            return []
 
     def to_internal_value(self, data):
         """Map 'title' field to 'name' field for internal processing"""
@@ -193,6 +212,16 @@ class GiftSerializer(serializers.ModelSerializer):
         validated_data["couple"] = self.context["couple"]
         gift = Gift.objects.create(**validated_data)
         return gift
+
+    def to_representation(self, instance):
+        """Convert donation_options from cents to decimal format in response"""
+        data = super().to_representation(instance)
+        # Convert donation_options from cents to decimal (e.g., 500 -> 5.00)
+        if data.get('donation_options') and isinstance(data['donation_options'], list):
+            data['donation_options'] = [
+                round(option / 100, 2) for option in data['donation_options']
+            ]
+        return data
 
     def update(self, instance, validated_data):
         """Update gift fields"""

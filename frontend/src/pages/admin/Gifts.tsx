@@ -155,61 +155,87 @@ export default function Gifts() {
           <div className="grid gap-3 sm:gap-4">
             {gifts.map((gift) => (
               <Card key={gift.id}>
-                <CardContent className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center p-3 sm:p-4">
-                  <img
-                    src={gift.image_url || gift.imageUrl || ''}
-                    alt={gift.name || gift.title || 'Gift'}
-                    className="h-24 w-24 sm:h-20 sm:w-20 rounded-lg object-cover flex-shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-semibold text-sm sm:text-base">{gift.name || gift.title}</h3>
-                      {gift.status === 'purchased' && (
-                        <Badge className="text-xs sm:text-sm bg-green-100 text-green-800 hover:bg-green-100">
-                          ✓ Comprado
-                        </Badge>
-                      )}
-                      {gift.status === 'reserved' && (
-                        <Badge variant="secondary" className="text-xs sm:text-sm">
-                          Reservado por {gift.reserved_by}
-                        </Badge>
-                      )}
+                <CardContent className="flex flex-col gap-3 sm:gap-4 p-3 sm:p-4">
+                  <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center">
+                    <img
+                      src={gift.image_url || gift.imageUrl || ''}
+                      alt={gift.name || gift.title || 'Gift'}
+                      className="h-24 w-24 sm:h-20 sm:w-20 rounded-lg object-cover flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-sm sm:text-base">{gift.name || gift.title}</h3>
+                        {gift.status === 'purchased' && (
+                          <Badge className="text-xs sm:text-sm bg-green-100 text-green-800 hover:bg-green-100">
+                            ✓ Comprado
+                          </Badge>
+                        )}
+                        {gift.status === 'reserved' && (
+                          <Badge variant="secondary" className="text-xs sm:text-sm">
+                            Reservado por {gift.reserved_by}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="line-clamp-1 text-xs sm:text-sm text-muted-foreground">
+                        {gift.description}
+                      </p>
+                      <p className="font-display text-base sm:text-lg font-bold text-primary mt-1">
+                        {formatPrice(Number(gift.price) || 0)}
+                      </p>
                     </div>
-                    <p className="line-clamp-1 text-xs sm:text-sm text-muted-foreground">
-                      {gift.description}
-                    </p>
-                    <p className="font-display text-base sm:text-lg font-bold text-primary mt-1">
-                      {formatPrice(Number(gift.price) || 0)}
-                    </p>
+                    <div className="flex gap-2 w-full sm:w-auto">
+                      <Button
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-1 sm:flex-none gap-2"
+                        onClick={() => openImageUpload(gift)}
+                        variant="default"
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                        <span className="hidden sm:inline">Imagem</span>
+                      </Button>
+                      <Button
+                        className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-1 sm:flex-none gap-2"
+                        onClick={() => openEditForm(gift)}
+                        variant="outline"
+                      >
+                        <Heart className="h-4 w-4" />
+                        <span className="hidden sm:inline">Editar</span>
+                        <span className="sm:hidden">Editar</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 sm:flex-none sm:size-icon text-destructive hover:text-destructive"
+                        onClick={() => setDeletingGift(gift)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sm:hidden ml-2">Deletar</span>
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    <Button
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-1 sm:flex-none gap-2"
-                      onClick={() => openImageUpload(gift)}
-                      variant="default"
-                    >
-                      <ImageIcon className="h-4 w-4" />
-                      <span className="hidden sm:inline">Imagem</span>
-                    </Button>
-                    <Button
-                      className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 flex-1 sm:flex-none gap-2"
-                      onClick={() => openEditForm(gift)}
-                      variant="outline"
-                    >
-                      <Heart className="h-4 w-4" />
-                      <span className="hidden sm:inline">Presentear</span>
-                      <span className="sm:hidden">Editar</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 sm:flex-none sm:size-icon text-destructive hover:text-destructive"
-                      onClick={() => setDeletingGift(gift)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sm:hidden ml-2">Deletar</span>
-                    </Button>
-                  </div>
+
+                  {/* Donations Section */}
+                  {gift.donations && gift.donations.length > 0 && (
+                    <div className="border-t pt-3">
+                      <p className="text-sm font-semibold text-foreground mb-2">
+                        Doações ({gift.donations.length}):
+                      </p>
+                      <div className="space-y-2">
+                        {gift.donations.map((donation) => (
+                          <div
+                            key={donation.id}
+                            className="flex items-center justify-between p-2 bg-blue-50 border border-blue-200 rounded text-sm"
+                          >
+                            <span className="font-medium text-foreground">
+                              {donation.donor_name}
+                            </span>
+                            <span className="text-primary font-semibold">
+                              {formatPrice(Number(donation.amount) || 0)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}

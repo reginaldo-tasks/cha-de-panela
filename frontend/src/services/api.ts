@@ -138,6 +138,9 @@ export const api = {
         if (data.category) {
           formData.append('category', data.category);
         }
+        if (data.donation_options) {
+          formData.append('donation_options', JSON.stringify(data.donation_options));
+        }
         formData.append('image_file', data.image_file);
 
         return fetchWithAuthFormData<import('../types').Gift>('/gifts/', {
@@ -147,9 +150,16 @@ export const api = {
       }
 
       // Otherwise use standard JSON
+      const jsonData = {
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        category: data.category,
+        donation_options: data.donation_options,
+      };
       return fetchWithAuth<import('../types').Gift>('/gifts/', {
         method: 'POST',
-        body: JSON.stringify(data),
+        body: JSON.stringify(jsonData),
       });
     },
 
@@ -161,6 +171,9 @@ export const api = {
         if (data.description) formData.append('description', data.description);
         if (data.price !== undefined) formData.append('price', String(data.price));
         if (data.category) formData.append('category', data.category);
+        if ((data as any).donation_options) {
+          formData.append('donation_options', JSON.stringify((data as any).donation_options));
+        }
         formData.append('image_file', data.image_file);
 
         return fetchWithAuthFormData<import('../types').Gift>(`/gifts/${id}/`, {

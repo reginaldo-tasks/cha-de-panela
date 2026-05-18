@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Loader2, Heart, MapPin, MessageCircle, Copy, Check, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { api } from '@/services/api';
+import { applyTheme, resetTheme } from '@/lib/themeUtils';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
@@ -20,6 +21,7 @@ interface Couple {
     wedding_date: string | null;
     biography: string | null;
     image_url: string | null;
+    theme?: string;
 }
 
 interface Gift {
@@ -34,6 +36,7 @@ interface Gift {
     reserved_by?: string | null;
     url?: string | null;
     is_selected?: boolean;
+    donation_options?: number[] | null;
     donations?: Array<{
         id: string;
         gift: string;
@@ -78,7 +81,14 @@ export default function StoreDetail() {
                 }
 
                 const data = await response.json();
-                console.log(`[StoreDetail] ✓ Store loaded:`, { couple: data.couple_name, giftCount: data.gifts?.length || 0 });
+                console.log(`[StoreDetail] ✓ Store loaded:`, { couple: data.couple_name, theme: data.theme, giftCount: data.gifts?.length || 0 });
+
+                // Apply theme before rendering
+                if (data.theme) {
+                    console.log(`[StoreDetail] Applying theme: ${data.theme}`);
+                    applyTheme(data.theme);
+                }
+
                 setStoreData({
                     couple: {
                         id: data.id,
@@ -89,6 +99,7 @@ export default function StoreDetail() {
                         wedding_date: data.wedding_date,
                         biography: data.biography,
                         image_url: data.image_url,
+                        theme: data.theme,
                     },
                     gifts: data.gifts || [],
                 });
@@ -106,6 +117,14 @@ export default function StoreDetail() {
 
         fetchStore();
     }, [slug, toast]);
+
+    // Cleanup theme when component unmounts
+    useEffect(() => {
+        return () => {
+            // Reset to default theme when leaving the store page
+            resetTheme();
+        };
+    }, []);
 
     const handleDonateGift = async (giftId: string) => {
         if (!donorName.trim()) {
@@ -128,8 +147,15 @@ export default function StoreDetail() {
 
         setIsDonating(true);
         try {
-            console.log(`[StoreDetail] Attempting to donate R$ ${donationAmount} to gift ${giftId} by ${donorName}`);
-            const updatedGift = await api.gifts.donate(giftId, donorName, parseFloat(donationAmount));
+            // Convert to cents: if value >= 100, it's already in cents (from preset buttons)
+            // if < 100, it's in reais and needs multiplication
+            let amountInCents = parseFloat(donationAmount);
+            if (amountInCents < 100) {
+                amountInCents = amountInCents * 100;
+            }
+
+            console.log(`[StoreDetail] Attempting to donate R$ ${donationAmount} (${amountInCents} cents) to gift ${giftId} by ${donorName}`);
+            const updatedGift = await api.gifts.donate(giftId, donorName, amountInCents);
 
             console.log(`[StoreDetail] ✓ Donation successful:`, updatedGift);
             toast({
@@ -369,19 +395,39 @@ export default function StoreDetail() {
                                         />
                                     </div>
 
-                                    {/* Donation Amount Input */}
+                                    {/* Donation Amount Options */}
                                     <div>
                                         <label className="text-sm font-medium">Valor da Doação (R$) *</label>
-                                        <Input
-                                            type="number"
-                                            placeholder="0,00"
-                                            min="0.01"
-                                            step="0.01"
-                                            value={donationAmount}
-                                            onChange={(e) => setDonationAmount(e.target.value)}
-                                            className="mt-2"
-                                            onKeyPress={(e) => e.key === 'Enter' && donorName && handleDonateGift(selectedGift.id)}
-                                        />
+                                        {selectedGift.donation_options && selectedGift.donation_options.length > 0 ? (
+                                            <div className="grid grid-cols-3 gap-2 mt-2">
+                                                {selectedGift.donation_options.map((option) => (
+                                                    <Button
+                                                        key={option}
+                                                        variant={donationAmount === (option * 100).toString() ? 'default' : 'outline'}
+                                                        className="font-semibold"
+                                                        onClick={() => setDonationAmount((option * 100).toString())}
+                                                    >
+                                                        R$ {(typeof option === 'number' ? option : parseFloat(option.toString())).toFixed(2).replace('.', ',')}
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <Input
+                                                type="number"
+                                                placeholder="0,00"
+                                                min="0.01"
+                                                step="0.01"
+                                                value={donationAmount}
+                                                onChange={(e) => {
+                                                    const value = e.target.value;
+                                                    // If value looks like cents (>= 100), use as-is
+                                                    // Otherwise, treat as reais
+                                                    setDonationAmount(value);
+                                                }}
+                                                className="mt-2"
+                                                onKeyPress={(e) => e.key === 'Enter' && donorName && handleDonateGift(selectedGift.id)}
+                                            />
+                                        )}
                                     </div>
 
                                     {/* PIX Key Display */}

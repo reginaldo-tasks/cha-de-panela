@@ -24,6 +24,9 @@ const giftSchema = z.object({
   title: z.string().optional(),
   description: z.string().min(10, 'A descrição deve ter no mínimo 10 caracteres'),
   price: z.coerce.number().min(1, 'O preço deve ser maior que zero'),
+  donation_option_1: z.coerce.number().min(0.01, 'Deve ser maior que zero').optional(),
+  donation_option_2: z.coerce.number().min(0.01, 'Deve ser maior que zero').optional(),
+  donation_option_3: z.coerce.number().min(0.01, 'Deve ser maior que zero').optional(),
   image_file: z
     .instanceof(File)
     .refine(
@@ -56,6 +59,9 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
       title: gift?.title || '',
       description: gift?.description || '',
       price: gift?.price ? Number(gift.price) : 0,
+      donation_option_1: gift?.donation_options?.[0] ? Number(gift.donation_options[0]) : undefined,
+      donation_option_2: gift?.donation_options?.[1] ? Number(gift.donation_options[1]) : undefined,
+      donation_option_3: gift?.donation_options?.[2] ? Number(gift.donation_options[2]) : undefined,
       image_file: undefined,
     },
   });
@@ -100,11 +106,17 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
 
   const handleSubmit = async (data: CreateGiftInput) => {
     // Ensure all fields are properly set for backend
+    const donationOptions: number[] = [];
+    if (data.donation_option_1) donationOptions.push(Math.round(data.donation_option_1 * 100));
+    if (data.donation_option_2) donationOptions.push(Math.round(data.donation_option_2 * 100));
+    if (data.donation_option_3) donationOptions.push(Math.round(data.donation_option_3 * 100));
+
     const backendData: CreateGiftInput = {
       name: data.name || data.title || '',
       description: data.description,
       price: data.price,
       image_file: data.image_file,
+      donation_options: donationOptions.length > 0 ? donationOptions : null,
     };
     await onSubmit(backendData);
     form.reset();
@@ -168,6 +180,78 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
             </FormItem>
           )}
         />
+
+        <div className="border-t pt-4">
+          <p className="text-sm font-medium mb-3">Opções de Doação (opcional)</p>
+          <p className="text-xs text-muted-foreground mb-3">
+            Defina até 3 valores pré-selecionados que os doadores poderão escolher
+          </p>
+
+          <div className="space-y-3">
+            <FormField
+              control={form.control}
+              name="donation_option_1"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs sm:text-sm">Opção 1 (R$)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      placeholder="25.00"
+                      {...field}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="donation_option_2"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs sm:text-sm">Opção 2 (R$)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      placeholder="50.00"
+                      {...field}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="donation_option_3"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs sm:text-sm">Opção 3 (R$)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      placeholder="100.00"
+                      {...field}
+                      className="text-sm"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs sm:text-sm" />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
         <FormField
           control={form.control}
