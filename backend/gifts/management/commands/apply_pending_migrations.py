@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from django.core.management import call_command
 from django.apps import apps
+from django.db import DatabaseError
 
 
 class Command(BaseCommand):
@@ -32,8 +33,16 @@ class Command(BaseCommand):
         self._ensure_couple_theme_column()
         self._ensure_gift_donation_options_column()
     
+    def _is_postgresql(self):
+        """Check if using PostgreSQL database."""
+        return 'postgresql' in connection.settings_dict['ENGINE'].lower()
+    
     def _ensure_couple_theme_column(self):
         """Ensure the theme column exists on couples table."""
+        if not self._is_postgresql():
+            self.stdout.write(self.style.WARNING("⊘ Skipping schema check (not PostgreSQL)"))
+            return
+            
         try:
             with connection.cursor() as cursor:
                 # Check if column exists
@@ -59,6 +68,11 @@ class Command(BaseCommand):
     
     def _ensure_gift_donation_options_column(self):
         """Ensure the donation_options column exists on gifts table."""
+        if not self._is_postgresql():
+            self.stdout.write(self.style.WARNING("⊘ Skipping schema check (not PostgreSQL)"))
+            self._print_completion()
+            return
+            
         try:
             with connection.cursor() as cursor:
                 # Check if column exists
