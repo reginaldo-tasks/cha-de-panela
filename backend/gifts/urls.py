@@ -14,6 +14,7 @@ from gifts.views import (
     GiftDetailView,
     GiftImageView,
     GiftImageUploadView,
+    CoupleImageUploadView,
     DonateGiftView,
     ReserveGiftView,
     SelectGiftView,
@@ -43,6 +44,7 @@ urlpatterns = [
     path("couple/public/", CouplePublicView.as_view(), name="couple-public"),
     path("couple/<str:id>/", CoupleDetailView.as_view(), name="couple-detail"),
     path("couple/", CoupleDetailView.as_view(), {"id": "me"}, name="couple-me"),
+    path("upload/image/", CoupleImageUploadView.as_view(), name="couple-upload-image"),
     # Store by couple slug (dynamic URL)
     path("store/<str:slug>/", StoreDetailView.as_view(), name="store-detail"),
     # Gifts

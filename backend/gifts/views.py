@@ -569,6 +569,97 @@ class GiftImageUploadView(views.APIView):
             )
 
 
+class CoupleImageUploadView(views.APIView):
+    """
+    Upload image for a couple.
+
+    POST: Upload an image to Vercel Blob Storage and associate with couple
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        """Upload image for the authenticated user's couple profile"""
+        try:
+            # Get the couple associated with the authenticated user
+            couple = Couple.objects.get(user=request.user)
+        except Couple.DoesNotExist:
+            return Response(
+                {"detail": "Couple profile not found."}, status=status.HTTP_404_NOT_FOUND
+            )
+
+        # Get image from request
+        image_file = request.FILES.get("image")
+        if not image_file:
+            return Response(
+                {"detail": "No image file provided."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            from gifts.blob_service import get_blob_service
+
+            blob_service = get_blob_service()
+            if not blob_service:
+                return Response(
+                    {
+                        "detail": "Image upload service is not configured.",
+                        "error": "BLOB_NOT_CONFIGURED",
+                    },
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE,
+                )
+
+            # Upload image to Vercel Blob Storage (returns tuple: (url, key))
+            image_url, _ = blob_service.upload_image(image_file, couple_id=couple.id)
+
+            if not image_url:
+                return Response(
+                    {
+                        "detail": "Failed to upload image to storage.",
+                        "error": "UPLOAD_FAILED",
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+
+            # Update couple with image URL
+            couple.image_url = image_url
+            couple.save()
+
+            # Return updated couple with image_url included
+            serializer = CoupleSerializer(couple, context={"request": request})
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK,
+            )
+
+        except Exception as e:
+            import traceback
+            import sys
+
+            error_details = {
+                "error_type": type(e).__name__,
+                "error_message": str(e),
+                "endpoint": os.getenv(
+                    "MINIO_ENDPOINT", "https://minio-latest-2yx5.onrender.com"
+                ),
+                "bucket": "couples",
+            }
+
+            # Log to stderr for Vercel logs
+            print(f"Couple image upload error: {error_details}", file=sys.stderr)
+            traceback.print_exc(file=sys.stderr)
+
+            # Return user-friendly error
+            return Response(
+                {
+                    "detail": f"Error uploading image: {str(e)}",
+                    "error": "UPLOAD_FAILED",
+                    "debug": error_details if settings.DEBUG else None,
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
 # ========== Health Check ==========
 
 
