@@ -106,6 +106,23 @@ def run_migrations():
         return True  # Always return True to never block deployment
 
 
+def apply_pending_migrations():
+    """Apply any pending migrations including new schema columns."""
+    print("\n" + "=" * 60)
+    print("ENSURING SCHEMA IS UP-TO-DATE")
+    print("=" * 60)
+    try:
+        print("→ Executing: python manage.py apply_pending_migrations")
+        call_command("apply_pending_migrations", verbosity=2)
+        print("✓ Pending migrations applied and schema verified")
+        return True
+    except Exception as e:
+        print(f"\n⚠ Schema update encountered an issue: {type(e).__name__}")
+        print(f"   Message: {str(e)[:300]}")
+        print("   This will be retried on next deployment.")
+        return True  # Don't block deployment
+
+
 def create_superuser_if_needed():
     """Create a superuser for initial setup if it doesn't exist."""
     from django.contrib.auth.models import User
