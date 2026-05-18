@@ -244,7 +244,7 @@ export default function Gifts() {
 
         {/* Add/Edit Form Dialog */}
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogContent className="max-w-md w-[95vw] sm:w-full">
+          <DialogContent className="max-w-md w-[95vw] sm:w-full max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>
                 {editingGift ? 'Editar Presente' : 'Adicionar Presente'}
