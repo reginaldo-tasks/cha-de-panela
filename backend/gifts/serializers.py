@@ -214,13 +214,16 @@ class GiftSerializer(serializers.ModelSerializer):
         return gift
 
     def to_representation(self, instance):
-        """Convert donation_options from cents to decimal format in response"""
+        """Convert donation_options from cents to decimal format in response, filtering out zeros"""
         data = super().to_representation(instance)
-        # Convert donation_options from cents to decimal (e.g., 500 -> 5.00)
+        # Convert donation_options from cents to decimal (e.g., 500 -> 5.00) and filter out zero/null values
         if data.get('donation_options') and isinstance(data['donation_options'], list):
             data['donation_options'] = [
-                round(option / 100, 2) for option in data['donation_options']
+                round(option / 100, 2) for option in data['donation_options'] if option and option > 0
             ]
+            # Convert empty list to None for consistency
+            if not data['donation_options']:
+                data['donation_options'] = None
         return data
 
     def update(self, instance, validated_data):

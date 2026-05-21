@@ -24,9 +24,9 @@ const giftSchema = z.object({
   title: z.string().optional(),
   description: z.string().min(10, 'A descrição deve ter no mínimo 10 caracteres'),
   price: z.coerce.number().min(1, 'O preço deve ser maior que zero'),
-  donation_option_1: z.coerce.number().min(0.01, 'Deve ser maior que zero').optional(),
-  donation_option_2: z.coerce.number().min(0.01, 'Deve ser maior que zero').optional(),
-  donation_option_3: z.coerce.number().min(0.01, 'Deve ser maior que zero').optional(),
+  donation_option_1: z.coerce.number().positive().optional().or(z.literal('')),
+  donation_option_2: z.coerce.number().positive().optional().or(z.literal('')),
+  donation_option_3: z.coerce.number().positive().optional().or(z.literal('')),
   image_file: z
     .instanceof(File)
     .refine(
@@ -184,7 +184,7 @@ export function GiftForm({ gift, onSubmit, onCancel, isLoading }: GiftFormProps)
         <div className="border-t pt-4">
           <p className="text-sm font-medium mb-3">Opções de Doação (opcional)</p>
           <p className="text-xs text-muted-foreground mb-3">
-            Defina até 3 valores pré-selecionados que os doadores poderão escolher
+            Deixe em branco para permitir doações de qualquer valor. Ou defina até 3 valores pré-selecionados que os doadores poderão escolher.
           </p>
 
           <div className="space-y-3">

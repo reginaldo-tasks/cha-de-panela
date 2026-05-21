@@ -412,21 +412,32 @@ export default function StoreDetail() {
                                                 ))}
                                             </div>
                                         ) : (
-                                            <Input
-                                                type="number"
-                                                placeholder="0,00"
-                                                min="0.01"
-                                                step="0.01"
-                                                value={donationAmount}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    // If value looks like cents (>= 100), use as-is
-                                                    // Otherwise, treat as reais
-                                                    setDonationAmount(value);
-                                                }}
-                                                className="mt-2"
-                                                onKeyPress={(e) => e.key === 'Enter' && donorName && handleDonateGift(selectedGift.id)}
-                                            />
+                                            <div className="space-y-3 mt-2">
+                                                {/* Full price button when no donation options are configured */}
+                                                <Button
+                                                    variant={donationAmount === ((selectedGift.price || 0) * 100).toString() ? 'default' : 'outline'}
+                                                    className="w-full font-semibold"
+                                                    onClick={() => setDonationAmount(((selectedGift.price || 0) * 100).toString())}
+                                                >
+                                                    R$ {(typeof selectedGift.price === 'number' ? selectedGift.price : parseFloat(selectedGift.price?.toString() || '0')).toFixed(2).replace('.', ',')}
+                                                </Button>
+                                                {/* Custom amount input */}
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Ou digite um valor customizado..."
+                                                    min="0.01"
+                                                    step="0.01"
+                                                    value={donationAmount}
+                                                    onChange={(e) => {
+                                                        const value = e.target.value;
+                                                        // If value looks like cents (>= 100), use as-is
+                                                        // Otherwise, treat as reais
+                                                        setDonationAmount(value);
+                                                    }}
+                                                    className="text-sm"
+                                                    onKeyPress={(e) => e.key === 'Enter' && donorName && handleDonateGift(selectedGift.id)}
+                                                />
+                                            </div>
                                         )}
                                     </div>
 
