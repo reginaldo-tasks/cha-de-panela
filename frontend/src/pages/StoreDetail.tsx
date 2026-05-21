@@ -421,22 +421,6 @@ export default function StoreDetail() {
                                                 >
                                                     R$ {(typeof selectedGift.price === 'number' ? selectedGift.price : parseFloat(selectedGift.price?.toString() || '0')).toFixed(2).replace('.', ',')}
                                                 </Button>
-                                                {/* Custom amount input */}
-                                                <Input
-                                                    type="number"
-                                                    placeholder="Ou digite um valor customizado..."
-                                                    min="0.01"
-                                                    step="0.01"
-                                                    value={donationAmount}
-                                                    onChange={(e) => {
-                                                        const value = e.target.value;
-                                                        // If value looks like cents (>= 100), use as-is
-                                                        // Otherwise, treat as reais
-                                                        setDonationAmount(value);
-                                                    }}
-                                                    className="text-sm"
-                                                    onKeyPress={(e) => e.key === 'Enter' && donorName && handleDonateGift(selectedGift.id)}
-                                                />
                                             </div>
                                         )}
                                     </div>
